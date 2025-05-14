@@ -1,0 +1,387 @@
+[
+    {
+        "src": "ADAMS COUNTY 911",
+        "title": "Adams County 911 Coordinator",
+        "name": "Jordan Fisher",
+        "phone": "701-567-2530",
+        "email": "jordfisher@nd.gov"
+    },
+    {
+        "src": "BARNES COUNTY 911",
+        "title": "Barnes County 911 Coordinator",
+        "name": "Sarah Miller",
+        "phone": "701-845-8181",
+        "email": "smiller@barnescounty.us"
+    },
+    {
+        "src": "BENSON COUNTY 911",
+        "title": "Benson County 911 Coordinator",
+        "name": "Sarah Britton",
+        "phone": "701-662-0700",
+        "email": "smb@lrlec.org"
+    },
+    {
+        "src": "BILLINGS COUNTY 911",
+        "title": "Billings County 911 Coordinator",
+        "name": "Stacey Swanson",
+        "phone": "701-623-4810",
+        "email": "stswanson@nd.gov"
+    },
+    {
+        "src": "BOTTINEAU COUNTY 911",
+        "title": "Bottineau County 911 Coordinator",
+        "name": "Tanner Hellenbrand",
+        "phone": "701-228-2740 Ext 7",
+        "email": "tanner.hellenbrand@co.bottineau.nd.us"
+    },
+    {
+        "src": "BOWMAN COUNTY 911",
+        "title": "Bowman County 911 Coordinator",
+        "name": "Karla Germann",
+        "phone": "701-523-4771",
+        "email": "kmgermann@bowmancountynd.gov"
+    },
+    {
+        "src": "BURKE COUNTY 911",
+        "title": "Burke County 911 Coordinator",
+        "name": "Barry Jager",
+        "phone": "701-377-4911",
+        "email": "bjager@nd.gov"
+    },
+    {
+        "src": "BURLEIGH COUNTY 911",
+        "title": "Burleigh County 911 Coordinator",
+        "name": "Mike Dannenfelzer",
+        "phone": "701-222-6727",
+        "email": "mdannenfelzer@bismarcknd.gov"
+    },
+    {
+        "src": "CAVALIER COUNTY 911",
+        "title": "Cavalier County 911 Coordinator",
+        "name": "Karen Kempert",
+        "phone": "701-256-3911",
+        "email": "kkempert@nd.gov"
+    },
+    {
+        "src": "CITY OF BISMARCK 911",
+        "title": "City of Bismarck CenCom Director",
+        "name": "Mike Dannenfelzer",
+        "phone": "701-255-5200",
+        "email": "mdannenfelzer@bismarcknd.gov"
+    },
+    {
+        "src": "CITY OF GRAND FORKS 911",
+        "title": "City of Grand Forks Fire Dept (formerly 911 Coordinator)",
+        "name": "General questions, comments, and concerns",
+        "phone": "701-746-2566",
+        "email": "fire_admin@grandforksgov.com"
+    },
+    {
+        "src": "DICKEY COUNTY 911",
+        "title": "Dickey County 911 Coordinator",
+        "name": "Charlie Russell",
+        "phone": "701-320-6299",
+        "email": "crussell@nd.gov"
+    },
+    {
+        "src": "DIVIDE COUNTY 911",
+        "title": "Divide County 911 Coordinator",
+        "name": "Shari Bublitz",
+        "phone": "701-571-9218",
+        "email": "sbublitz@nd.gov"
+    },
+    {
+        "src": "DUNN COUNTY 911",
+        "title": "Dunn County 911 Coordinator",
+        "name": "Sandy Rohde",
+        "phone": "701-573-4609",
+        "email": "sandy.rohde@dunncountynd.gov"
+    },
+    {
+        "src": "EDDY COUNTY 911",
+        "title": "Eddy County 911 Coordinator",
+        "name": "Sarah Britton",
+        "phone": "701-662-0700",
+        "email": "smb@lrlec.org"
+    },
+    {
+        "src": "EMMONS COUNTY 911",
+        "title": "Emmons County 911 Coordinator",
+        "name": "Gary Sanders",
+        "phone": "701-254-4411",
+        "email": "gsanders@nd.gov"
+    },
+    {
+        "src": "FOSTER COUNTY 911",
+        "title": "Foster County 911 Coordinator",
+        "name": "(position vacant)",
+        "phone": "701-652-2252",
+        "email": "fosterem@nd.gov"
+    },
+    {
+        "src": "GOLDEN VALLEY COUNTY 911",
+        "title": "Golden Valley County 911 Coordinator",
+        "name": "Carla Beeler",
+        "phone": "701-872-4678",
+        "email": "cbeeler@nd.gov"
+    },
+    {
+        "src": "GRAND FORKS COUNTY 911",
+        "title": "Grand Forks County 911 Coordinator",
+        "name": "Chuck Marcott",
+        "phone": "701-787-8040",
+        "email": "cmarcott@grandforksgov.com"
+    },
+    {
+        "src": "GRANT COUNTY 911",
+        "title": "Grant County 911 Coordinator",
+        "name": "Jared Fischer",
+        "phone": "701-622-3944",
+        "email": "fischerjared@nd.gov"
+    },
+    {
+        "src": "GRIGGS COUNTY 911",
+        "title": "Griggs County 911 Coordinator",
+        "name": "Wayne Oien",
+        "phone": "701-797-3420",
+        "email": "wayne.oien@griggscountynd.gov"
+    },
+    {
+        "src": "HETTINGER COUNTY 911",
+        "title": "Hettinger County 911 Coordinator",
+        "name": "Tracy Kruger",
+        "phone": "701-824-2515",
+        "email": "tkruger@nd.gov"
+    },
+    {
+        "src": "KIDDER COUNTY 911",
+        "title": "Kidder County 911 Coordinator",
+        "name": "Loren Lang",
+        "phone": "701-475-4523",
+        "email": "lolang@nd.gov"
+    },
+    {
+        "src": "LAMOURE COUNTY 911",
+        "title": "LaMoure County 911 Coordinator",
+        "name": "Kimberly Robbins",
+        "phone": "701-883-6096",
+        "email": "krobbins@nd.gov"
+    },
+    {
+        "src": "LOGAN COUNTY 911",
+        "title": "Logan County 911 Coordinator",
+        "name": "Andrew Bartholomaus",
+        "phone": "701-754-2495",
+        "email": "abartholomaus@nd.gov"
+    },
+    {
+        "src": "MCHENRY COUNTY 911",
+        "title": "McHenry County 911 Coordinator",
+        "name": "Kelsey Siegler",
+        "phone": "701-351-0377",
+        "email": "pierceem@nd.gov"
+    },
+    {
+        "src": "MCINTOSH COUNTY 911",
+        "title": "McIntosh County 911 Coordinator",
+        "name": "Steve Delzer",
+        "phone": "701-288-5160",
+        "email": "scdelzer@nd.gov"
+    },
+    {
+        "src": "MCKENZIE COUNTY 911",
+        "title": "McKenzie County 911 Coordinator",
+        "name": "Rick Schreiber",
+        "phone": "701-586-3445",
+        "email": "911coordinator@co.mckenzie.nd.us"
+    },
+    {
+        "src": "MCLEAN COUNTY 911",
+        "title": "McLean County 911 Coordinator",
+        "name": "Richard Johnson",
+        "phone": "701-462-8865 Ext 865",
+        "email": "rijohnson@nd.gov"
+    },
+    {
+        "src": "MERCER COUNTY 911",
+        "title": "Mercer County 911 Coordinator",
+        "name": "Kent Roth",
+        "phone": "701-745-3333",
+        "email": "kroth@nd.gov"
+    },
+    {
+        "src": "MORTON COUNTY 911",
+        "title": "Morton County 911 Coordinator",
+        "name": "Heidi Hamelton",
+        "phone": "701-667-3480",
+        "email": "heidi.hamelton@mortonnd.org"
+    },
+    {
+        "src": "MOUNTRAIL COUNTY 911",
+        "title": "Mountrail County 911 Coordinator",
+        "name": "Corey Bristol",
+        "phone": "701-628-2975",
+        "email": "coreyb@co.mountrail.nd.us"
+    },
+    {
+        "src": "NELSON COUNTY 911",
+        "title": "Nelson County 911 Coordinator",
+        "name": "Sarah Britton",
+        "phone": "701-662-0700",
+        "email": "smb@lrlec.org"
+    },
+    {
+        "src": "OLIVER COUNTY 911",
+        "title": "Oliver County 911 Coordinators",
+        "name": "Ashley Hill & Kent Roth",
+        "phone": "701-745-3333 & 701-745-3333",
+        "email": "aamiller@nd.gov & kroth@nd.gov"
+    },
+    {
+        "src": "PEMBINA COUNTY 911",
+        "title": "Pembina County 911 Coordinator",
+        "name": "Samantha Weeks",
+        "phone": "701-265-8222",
+        "email": "smweeks@nd.gov"
+    },
+    {
+        "src": "PIERCE COUNTY 911",
+        "title": "Pierce County 911 Coordinator",
+        "name": "Carrie Jean Vallier",
+        "phone": "701-776-2221 Ext 2325",
+        "email": "cvallier@nd.gov"
+    },
+    {
+        "src": "RAMSEY COUNTY 911",
+        "title": "Ramsey County 911 Coordinator",
+        "name": "Sarah Britton",
+        "phone": "701-662-0700",
+        "email": "smb@lrlec.org"
+    },
+    {
+        "src": "RANSOM COUNTY 911",
+        "title": "Ransom County 911 Coordinator",
+        "name": "Kirsten Gilbert",
+        "phone": "701-683-6174",
+        "email": "kgilbert@nd.gov"
+    },
+    {
+        "src": "RENVILLE COUNTY 911",
+        "title": "Renville County 911 Coordinator",
+        "name": "Renae Johnson",
+        "phone": "701-756-3306",
+        "email": "johnsonrenae@nd.gov"
+    },
+    {
+        "src": "RICHLAND COUNTY 911",
+        "title": "Richland County 911 Coordinator",
+        "name": "Jill Breuer",
+        "phone": "701-642-7831",
+        "email": "jbreuer@co.richland.nd.us"
+    },
+    {
+        "src": "ROLETTE COUNTY 911",
+        "title": "Rolette County 911 Coordinator",
+        "name": "Ryan Hiatt",
+        "phone": "701-477-0911",
+        "email": "ryhiatt@nd.gov"
+    },
+    {
+        "src": "SARGENT COUNTY 911",
+        "title": "Sargent County 911 Coordinator",
+        "name": "Wendy Willprecht",
+        "phone": "701-724-6241 Ext 113",
+        "email": "wwillprecht@nd.gov"
+    },
+    {
+        "src": "SHERIDAN COUNTY 911",
+        "title": "Sheridan County 911 Coordinator",
+        "name": "Delbert Hoffmann",
+        "phone": "701-363-2368",
+        "email": "dahoffmann@nd.gov"
+    },
+    {
+        "src": "SIOUX COUNTY 911",
+        "title": "Sioux County 911 Coordinator",
+        "name": "Angela Eagle",
+        "phone": "701-854-3481",
+        "email": "aeagle@nd.gov"
+    },
+    {
+        "src": "SLOPE COUNTY 911",
+        "title": "Slope County 911 Coordinator",
+        "name": "Karla Germann",
+        "phone": "701-523-4771",
+        "email": "kmgermann@bowmancountynd.gov"
+    },
+    {
+        "src": "STARK COUNTY 911",
+        "title": "Stark County Emergency Services Director",
+        "name": "Alaynea Decker",
+        "phone": "701-456-7605",
+        "email": "adecker@starkcountynd.gov"
+    },
+    {
+        "src": "STEELE COUNTY 911",
+        "title": "Steele County 911 Coordinator",
+        "name": "Ben Gates",
+        "phone": "701-524-2442",
+        "email": "bgates@nd.gov"
+    },
+    {
+        "src": "STUTSMAN COUNTY 911",
+        "title": "Stutsman County 911 Coordinator",
+        "name": "Jessica Moser",
+        "phone": "701-252-9093",
+        "email": "jmoser@stutsmancounty.gov"
+    },
+    {
+        "src": "TOWNER COUNTY 911",
+        "title": "Towner County 911 Coordinator",
+        "name": "Lori Beck",
+        "phone": "701-968-4366",
+        "email": "lbeck@nd.gov"
+    },
+    {
+        "src": "TRAILL COUNTY 911",
+        "title": "Traill County 911 Coordinator",
+        "name": "Gerald Tollefson",
+        "phone": "701-786-3931",
+        "email": "traill911@nd.gov"
+    },
+    {
+        "src": "WALSH COUNTY 911",
+        "title": "Walsh County 911 Coordinator",
+        "name": "Kristle Kjemhus",
+        "phone": "701-352-2311",
+        "email": "kkjemhus@nd.gov"
+    },
+    {
+        "src": "WARD COUNTY 911",
+        "title": "Ward County 911 Coordinator",
+        "name": "Ryan Summers",
+        "phone": "701-857-6422",
+        "email": "rsummers@wardnd.gov"
+    },
+    {
+        "src": "WELLS COUNTY 911",
+        "title": "Wells County 911 Coordinator",
+        "name": "Janelle Pepple",
+        "phone": "701-547-3319",
+        "email": "jpepple@nd.gov"
+    },
+    {
+        "src": "WILLIAMS COUNTY 911",
+        "title": "Executive Director of Williams County Dispatch Center",
+        "name": "Michelle Romans",
+        "phone": "701-774-2786",
+        "email": "miaromans@nd.gov"
+    },
+    {
+        "src": "casscountynd.gov",
+        "title": "Cass County 911 Coordinator",
+        "name": "Kay Anderson",
+        "phone": "701-241-5762",
+        "email": "andersonk@casscountynd.gov"
+    }
+]
