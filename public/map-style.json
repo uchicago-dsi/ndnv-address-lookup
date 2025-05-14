@@ -1,7 +1,10 @@
 {
   "version": 8,
+
   "name": "north-dakota-street-address-lookup",
+  "id": "north-dakota-street-address-lookup",
   "metadata": {},
+
   "sources": {
     "usgs": {
       "type": "raster",
@@ -19,6 +22,14 @@
       ],
       "maxzoom": 14,
       "attribution": "<a href='https://www.openmaptiles.org/'>OpenMapTiles</a>, <a href='https://www.openstreetmap.org/copyright/'>OpenStreetMap contributors</a>"
+    },
+    "reservations": {
+      "type": "geojson",
+      "data": "http://localhost:5173/reservations.geojson"
+    },
+    "counties": {
+      "type": "geojson",
+      "data": "http://localhost:5173/counties.geojson"
     }
   },
 
@@ -43,14 +54,62 @@
       }
     },
     {
+      "id": "counties",
+      "type": "line",
+      "source": "counties",
+      "maxzoom": 12,
+      "paint": {
+        "line-color": "hsl(122, 100%, 56%)",
+        "line-width": 2
+      }
+    },
+    {
+      "id": "counties-names",
+      "type": "symbol",
+      "source": "counties",
+      "maxzoom": 9,
+      "layout": {
+        "text-font": ["Noto Sans Regular"],
+        "text-size": {
+          "base": 1.2,
+          "stops": [[7, 14], [11, 24]]
+        },
+        "text-field": "{name}",
+        "text-max-width": 8,
+        "visibility": "visible"
+      },
+      "paint": {
+        "text-color": "hsl(122, 100%, 56%)"
+      }
+    },
+    {
       "id": "reservations",
       "type": "line",
-      "source": "openmaptiles",
-      "source-layer": "boundary",
+      "source": "reservations",
+      "maxzoom": 12,
       "paint": {
-        "line-color": "hsl(60, 100%, 50%)"
+        "line-color": "hsl(60, 100%, 50%)",
+        "line-width": 2
+      }
+    },
+    {
+      "id": "reservation-names",
+      "type": "symbol",
+      "source": "reservations",
+      "maxzoom": 9,
+      "layout": {
+        "text-font": ["Noto Sans Regular"],
+        "text-size": {
+          "base": 1.2,
+          "stops": [[7, 14], [11, 24]]
+        },
+        "text-field": "{name}",
+        "text-max-width": 8,
+        "visibility": "visible"
       },
-      "filter": ["==", "class", "aboriginal_lands"]
+      "paint": {
+        "text-color": "hsl(60, 100%, 50%)"
+      }
     },
     {
       "id": "states",
@@ -1567,6 +1626,5 @@
       }
     }
 
-  ],
-  "id": "north-dakota-street-address-lookup"
+  ]
 }
