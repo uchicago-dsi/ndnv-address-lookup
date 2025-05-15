@@ -1,13 +1,15 @@
 <script lang="ts">
   import { onMount } from 'svelte'
 
-  import { Map } from 'maplibre-gl';
+  import { Map, Popup } from 'maplibre-gl';
   import 'maplibre-gl/dist/maplibre-gl.css';
 
   import { asyncBufferFromUrl, parquetReadObjects } from 'hyparquet';
   import { compressors } from 'hyparquet-compressors';
 
   import sourceList from './source-list.json';
+  import copy_icon from './copy-icon.svg?raw';
+  import copied_icon from './copied-icon.svg?raw';
 
   let map;
   let mapContainer;
@@ -40,7 +42,10 @@
           "muni": addr.muni,
           "msag": addr.msag,
           "zip": addr.zip,
-          "src": sourceList[addr.src]
+          "src_title": sourceList[addr.src].title,
+          "src_name": sourceList[addr.src].name,
+          "src_phone": sourceList[addr.src].phone,
+          "src_email": sourceList[addr.src].email
         }
       }))
     };
@@ -65,6 +70,36 @@
             "interpolate", ["linear"], ["zoom"], 9, 2, 12, 3, 17, 8
           ]
         }
+      });
+      map.on("click", "address-circles", (e) => {
+        const coordinates = e.features[0].geometry.coordinates.slice();
+        const addr = e.features[0].properties;
+        const addrToCopy = `${addr.num >= 0 ? addr.num.toString() + " " : ""}${addr.street}, ${addr.muni != "Unincorporated" && addr.muni != "Undefined" ? addr.muni : addr.msag}, ND, ${addr.zip}`;
+        const description = `
+<span style="display: inline-flex; justify-content: center; width: 100%;" onclick='navigator.clipboard.writeText(${JSON.stringify(addrToCopy)}); this.innerHTML = ${JSON.stringify(copied_icon)};'>${copy_icon}</span><br>
+<strong>Street Address:</strong> ${addr.num >= 0 ? addr.num : ""} ${addr.street}<br>
+${addr.muni != "Unincorporated" && addr.muni != "Undefined" ? "<strong>Municipality:</strong> " + addr.muni + ", ND<br>" : ""}
+${addr.muni != addr.msag ? "<strong>911 Community (MSAG):</strong> " + addr.msag + ", ND<br>" : ""}
+<strong>Zip code:</strong> ${addr.zip}<br><br>
+<details>
+  <summary><strong>Source</strong></summary>
+  <strong>${addr.src_title}</strong><br>
+  <strong>Name:</strong> ${addr.src_name}<br>
+  <strong>Phone:</strong> ${addr.src_phone}<br>
+  <strong>Email:</strong> <a href="mailto:${addr.src_email}">${addr.src_email}</a>
+</details>
+`;
+
+        new Popup({maxWidth: "none", closeButton: false})
+          .setLngLat(coordinates)
+          .setHTML(description)
+          .addTo(map);
+      });
+      map.on("mouseenter", "address-circles", () => {
+        map.getCanvas().style.cursor = "pointer";
+      });
+      map.on("mouseleave", "address-circles", () => {
+        map.getCanvas().style.cursor = "";
       });
     });
 
