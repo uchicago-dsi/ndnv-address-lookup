@@ -18,6 +18,9 @@
     "vite": "^6.3.5"
   },
   "dependencies": {
+    "hyparquet": "^1.13.1",
+    "hyparquet-compressors": "^1.1.1",
+    "maplibre-gl": "^5.5.0",
     "svelte-maplibre": "^1.0.0"
   }
 }
