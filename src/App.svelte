@@ -1,13 +1,7 @@
-<script lang="ts">
+<!-- <script lang="ts">
   import { onMount } from 'svelte'
 
   import { Map, Popup } from 'maplibre-gl';
-  import 'maplibre-gl/dist/maplibre-gl.css';
-
-  import { asyncBufferFromUrl, parquetReadObjects } from 'hyparquet';
-  import { compressors } from 'hyparquet-compressors';
-
-  import sourceList from './source-list.json';
   import copy_icon from './copy-icon.svg?raw';
   import copied_icon from './copied-icon.svg?raw';
 
@@ -24,31 +18,7 @@
   let addresses;
   let addressesGeoJSON;
   (async () => {
-    const url = "http://localhost:5173/911-addresses.parquet";
-    const file = await asyncBufferFromUrl({ url });
-    addresses = await parquetReadObjects({ file, compressors });
-
-    addressesGeoJSON = {
-      "type": "FeatureCollection",
-      "features": addresses.map(addr => ({
-        "type": "Feature",
-        "geometry": {
-          "type": "Point",
-          "coordinates": [addr.lon, addr.lat]
-        },
-        "properties": {
-          "num": addr.num,
-          "street": addr.street,
-          "muni": addr.muni,
-          "msag": addr.msag,
-          "zip": addr.zip,
-          "src_title": sourceList[addr.src].title,
-          "src_name": sourceList[addr.src].name,
-          "src_phone": sourceList[addr.src].phone,
-          "src_email": sourceList[addr.src].email
-        }
-      }))
-    };
+    
 
     map.on("load", () => {
       map.addSource("addresses", {
@@ -56,20 +26,7 @@
         "data": addressesGeoJSON
       });
       map.addLayer({
-        "id": "address-circles",
-        "type": "circle",
-        "source": "addresses",
-        "minzoom": 9,
-        "paint": {
-          "circle-color": "hsl(214, 93%, 55%)",
-          "circle-stroke-width": [
-            "interpolate", ["linear"], ["zoom"], 9, 0, 12, 0.5, 17, 2
-          ],
-          "circle-stroke-color": "hsl(0, 15%, 100%)",
-          "circle-radius": [
-            "interpolate", ["linear"], ["zoom"], 9, 2, 12, 3, 17, 8
-          ]
-        }
+
       });
       map.on("click", "address-circles", (e) => {
         const coordinates = e.features[0].geometry.coordinates.slice();
@@ -105,13 +62,9 @@ ${addr.muni != addr.msag ? "<strong>911 Community (MSAG):</strong> " + addr.msag
 
   })();
 
+</script> -->
+
+<script>
+  import Map from './lib/Map.svelte';
 </script>
-
-<style>
-  .map {
-    width: 100%;
-    height: 100%;
-  }
-</style>
-
-<div class="map" bind:this={mapContainer}></div>
+<Map />
