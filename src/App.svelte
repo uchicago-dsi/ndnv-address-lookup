@@ -2,8 +2,8 @@
   import { onMount } from 'svelte'
 
   import { Map, Popup } from 'maplibre-gl';
-  import copy_icon from './copy-icon.svg?raw';
-  import copied_icon from './copied-icon.svg?raw';
+  import copy_icon from './assets/copy-icon.svg?raw';
+  import copied_icon from './assets/copied-icon.svg?raw';
 
   let map;
   let mapContainer;
