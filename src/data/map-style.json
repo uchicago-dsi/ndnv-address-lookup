@@ -22,19 +22,8 @@
       ],
       "maxzoom": 14,
       "attribution": "<a href='https://www.openmaptiles.org/'>OpenMapTiles</a>, <a href='https://www.openstreetmap.org/copyright/'>OpenStreetMap contributors</a>"
-    },
-    "reservations": {
-      "type": "geojson",
-      "data": "http://localhost:5173/reservations.geojson"
-    },
-    "counties": {
-      "type": "geojson",
-      "data": "http://localhost:5173/counties.geojson"
     }
   },
-
-  "sprite": "http://localhost:5173/sprites",
-  "glyphs": "http://localhost:5173/fonts/{fontstack}/{range}.pbf",
 
   "layers": [
     {

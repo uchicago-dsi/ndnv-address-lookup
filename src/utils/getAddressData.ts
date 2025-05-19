@@ -1,6 +1,5 @@
 import { asyncBufferFromUrl, parquetReadObjects } from "hyparquet";
 import { compressors } from "hyparquet-compressors";
-import sourceList from "../data/source-list.json";
 
 export const getAddressData = async (
   url = new URL("/911-addresses.parquet", import.meta.url).href
@@ -21,10 +20,7 @@ export const getAddressData = async (
         muni: addr.muni,
         msag: addr.msag,
         zip: addr.zip,
-        src_title: sourceList[addr.src].title,
-        src_name: sourceList[addr.src].name,
-        src_phone: sourceList[addr.src].phone,
-        src_email: sourceList[addr.src].email,
+        srcIndex: addr.src,
       },
     })),
   };
