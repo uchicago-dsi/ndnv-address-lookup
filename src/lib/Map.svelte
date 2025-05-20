@@ -1,5 +1,7 @@
 <script>
   import { MapLibre } from 'svelte-maplibre';
+  import { onMount } from 'svelte';
+  import SearchWorker from './SearchWorker';
   import 'maplibre-gl/dist/maplibre-gl.css';
 
   import AddressLayer from './AddressesLayer.svelte';
@@ -16,6 +18,11 @@
     type: "geojson",
     data: `${window.location.origin}/counties.geojson`
   };
+
+  onMount(async () => {
+    const results = await SearchWorker.search('blorp');
+    console.log('Results from worker: ', results);
+  });
 
 </script>
 
