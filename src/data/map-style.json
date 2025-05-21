@@ -30,16 +30,7 @@
       "id": "background",
       "type": "background",
       "paint": {
-        "background-color": "#ffffff"
-      }
-    },
-    {
-      "id": "usgs",
-      "type": "raster",
-      "source": "usgs",
-      "maxzoom": 24,
-      "layout": {
-        "visibility": "visible"
+        "background-color": "#5f6c4c"
       }
     },
     {
