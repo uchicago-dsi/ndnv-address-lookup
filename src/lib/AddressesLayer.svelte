@@ -6,19 +6,19 @@
   import copyIcon from '../assets/copy-icon.svg?raw';
   import copiedIcon from '../assets/copied-icon.svg?raw'
 
-  const { map, loaded } = $derived(getMapContext());
-  $effect(() => {
-    // only load data and fill if the map is loaded and addresses is empty
-    if (loaded) {
-      map.getSource("addresses")?.getData().then((data) => {
-        if (data.features.length == 0) {
-          getAddressData().then((data) => {
-            map.getSource("addresses")?.setData(data);
-          });
-        }
-      });
-    }
-  });
+  // const { map, loaded } = $derived(getMapContext());
+  // $effect(() => {
+  //   // only load data and fill if the map is loaded and addresses is empty
+  //   if (loaded) {
+  //     map.getSource("addresses")?.getData().then((data) => {
+  //       if (data.features.length == 0) {
+  //         getAddressData().then((data) => {
+  //           map.getSource("addresses")?.setData(data);
+  //         });
+  //       }
+  //     });
+  //   }
+  // });
 
   function mouseEnter(event) {
     event.map.getCanvas().style.cursor = "pointer";
