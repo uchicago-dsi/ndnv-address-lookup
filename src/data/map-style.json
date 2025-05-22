@@ -37,9 +37,17 @@
       "id": "counties",
       "type": "line",
       "source": "counties",
-      "maxzoom": 12,
       "paint": {
         "line-color": "hsl(122, 100%, 56%)",
+        "line-width": 2
+      }
+    },
+    {
+      "id": "reservations",
+      "type": "line",
+      "source": "reservations",
+      "paint": {
+        "line-color": "hsl(60, 100%, 50%)",
         "line-width": 2
       }
     },
@@ -60,16 +68,6 @@
       },
       "paint": {
         "text-color": "hsl(122, 100%, 56%)"
-      }
-    },
-    {
-      "id": "reservations",
-      "type": "line",
-      "source": "reservations",
-      "maxzoom": 12,
-      "paint": {
-        "line-color": "hsl(60, 100%, 50%)",
-        "line-width": 2
       }
     },
     {
