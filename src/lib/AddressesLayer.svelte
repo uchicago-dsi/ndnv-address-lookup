@@ -6,19 +6,19 @@
   import copyIcon from '../assets/copy-icon.svg?raw';
   import copiedIcon from '../assets/copied-icon.svg?raw'
 
-  // const { map, loaded } = $derived(getMapContext());
-  // $effect(() => {
-  //   // only load data and fill if the map is loaded and addresses is empty
-  //   if (loaded) {
-  //     map.getSource("addresses")?.getData().then((data) => {
-  //       if (data.features.length == 0) {
-  //         getAddressData().then((data) => {
-  //           map.getSource("addresses")?.setData(data);
-  //         });
-  //       }
-  //     });
-  //   }
-  // });
+  const { map, loaded } = $derived(getMapContext());
+  $effect(() => {
+    // only load data and fill if the map is loaded and addresses is empty
+    if (loaded) {
+      map.getSource("addresses")?.getData().then((data) => {
+        if (data.features.length == 0) {
+          getAddressData().then((data) => {
+            map.getSource("addresses")?.setData(data);
+          });
+        }
+      });
+    }
+  });
 
   function mouseEnter(event) {
     event.map.getCanvas().style.cursor = "pointer";
@@ -68,17 +68,24 @@
     onmouseenter={mouseEnter}
     onmouseleave={mouseLeave}
     onclick={handleClick}
-    minzoom={9}
     paint={{
-    "circle-color": "hsl(214, 93%, 55%)",
-    "circle-stroke-width": [
-    "interpolate", ["linear"], ["zoom"], 9, 0, 12, 0.5, 17, 2
-    ],
-    "circle-stroke-color": "hsl(0, 15%, 100%)",
-    "circle-radius": [
-    "interpolate", ["linear"], ["zoom"], 9, 2, 12, 3, 17, 8
-    ]
-    }}
+        "circle-color": "hsl(214, 93%, 55%)",
+        "circle-stroke-width": [
+          "interpolate", ["linear"], ["zoom"], 11, 0, 13, 0.5, 17, 2
+        ],
+        "circle-stroke-color": "hsl(0, 15%, 100%)",
+        "circle-radius": [
+          "interpolate", ["linear"], ["zoom"], 8, 0, 13, 3, 17, 8
+        ],
+        "circle-stroke-opacity": {
+          "base": 1,
+          "stops": [[11, 0], [13, 1], [20, 1]]
+        },
+        "circle-opacity": {
+          "base": 1,
+          "stops": [[8, 0], [10, 1], [20, 1]]
+        }
+      }}
   >
     <Popup>
       <span class="popupCopyButton" bind:this={popupCopyButton} onclick={handleCopy}>{@html copyIcon}</span><br>
