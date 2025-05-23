@@ -282,6 +282,72 @@
       }}
   />
 
+  <!-- highway-name-path -->
+  <SymbolLayer
+    filter={["all", ["in", "fclass", "path"], ["!=", "name", ""]]}
+    minzoom={15.5}
+    layout={{
+        "text-size": {
+          "base": 1,
+          "stops": [[13, 12], [14, 13]]
+        },
+        "text-font": ["Noto Sans Regular"],
+        "text-field": "{name}",
+        "symbol-placement": "line",
+        "text-rotation-alignment": "map"
+      }}
+    paint={{
+        "text-color": "#15367d",
+        "text-halo-color": "white",
+        "text-halo-blur": 0.5,
+        "text-halo-width": 2
+      }}
+  />
+
+  <!-- highway-name-minor -->
+  <SymbolLayer
+    filter={["all", ["in", "fclass", "service", "residential", "unclassified", "footway", "cycleway", "pedestrian", "steps", "bridleway", "living_street", "track", "track_grade1", "track_grade2", "track_grade3", "track_grade4", "track_grade5"], ["!=", "name", ""]]}
+    minzoom={15}
+    layout={{
+        "text-size": {
+          "base": 1,
+          "stops": [[13, 12], [14, 13]]
+        },
+        "text-font": ["Noto Sans Regular"],
+        "text-field": "{name}",
+        "symbol-placement": "line",
+        "text-rotation-alignment": "map"
+      }}
+    paint={{
+        "text-color": "#15367d",
+        "text-halo-color": "white",
+        "text-halo-blur": 0.5,
+        "text-halo-width": 2
+      }}
+  />
+
+  <!-- highway-name-major -->
+  <SymbolLayer
+    filter={["all", ["in", "fclass", "primary", "secondary", "tertiary", "motorway", "trunk"], ["!=", "name", ""]]}
+    minzoom={12.2}
+    layout={{
+        "text-size": {
+          "base": 1,
+          "stops": [[13, 12], [14, 13]]
+        },
+        "text-font": ["Noto Sans Regular"],
+        "text-field": "{name}",
+        "symbol-placement": "line",
+        "text-rotation-alignment": "map"
+      }}
+    paint={{
+        "text-color": "#15367d",
+        "text-halo-color": "white",
+        "text-halo-blur": 0.5,
+        "text-halo-width": 2
+      }}
+  />
+
   <!-- highway-shield -->
   <SymbolLayer
     filter={["all", [">", "ref_length", 0], ["<=", "ref_length", 7], ["in", "ref_prefix", "CR", "BIA", "FS", "PTH", "PR", "TR", "CH"]]}

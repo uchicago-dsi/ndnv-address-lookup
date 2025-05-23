@@ -23,7 +23,7 @@ export const getRoadData = async (
                 coordinates: road.longitude.map((x, i) => [x, road.latitude[i]]),
             },
             properties: {
-                name: road.name,
+                name: road.name === null ? "" : road.name,
                 fclass: road.fclass,
                 ref_prefix: ref_prefix,
                 ref_rest: ref_rest,
