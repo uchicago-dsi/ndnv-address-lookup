@@ -69,11 +69,11 @@
     onmouseleave={mouseLeave}
     onclick={handleClick}
     paint={{
-        "circle-color": "#237df2",
+        "circle-color": "cyan",
         "circle-stroke-width": [
           "interpolate", ["linear"], ["zoom"], 11, 0, 13, 0.5, 17, 2
         ],
-        "circle-stroke-color": "hsl(0, 15%, 100%)",
+        "circle-stroke-color": "black",
         "circle-radius": [
           "interpolate", ["linear"], ["zoom"], 8, 0, 13, 3, 17, 8
         ],

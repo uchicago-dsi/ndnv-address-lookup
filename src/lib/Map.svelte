@@ -4,6 +4,7 @@
 
   import AddressLayer from './AddressesLayer.svelte';
   import RoadLayer from './RoadLayer.svelte';
+  import WaterLayer from './WaterLayer.svelte';
   import mapStyle from '../data/map-style.json';
 
   // URL references in the map style JSON must be absolute
@@ -26,8 +27,9 @@
   standardControls
   bounds={[-104.5181265794389, 45.63232713888373, -96.06887947161051, 49.2702273475217]}
   >
-  <AddressLayer />
+  <WaterLayer />
   <RoadLayer />
+  <AddressLayer />
 </MapLibre>
 
 <style>

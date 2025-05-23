@@ -297,7 +297,7 @@
         "text-rotation-alignment": "map"
       }}
     paint={{
-        "text-color": "#15367d",
+        "text-color": "black",
         "text-halo-color": "white",
         "text-halo-blur": 0.5,
         "text-halo-width": 2
@@ -319,7 +319,7 @@
         "text-rotation-alignment": "map"
       }}
     paint={{
-        "text-color": "#15367d",
+        "text-color": "black",
         "text-halo-color": "white",
         "text-halo-blur": 0.5,
         "text-halo-width": 2
@@ -341,7 +341,7 @@
         "text-rotation-alignment": "map"
       }}
     paint={{
-        "text-color": "#15367d",
+        "text-color": "black",
         "text-halo-color": "white",
         "text-halo-blur": 0.5,
         "text-halo-width": 2
