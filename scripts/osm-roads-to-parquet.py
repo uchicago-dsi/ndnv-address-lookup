@@ -29,9 +29,6 @@ roads = roads.to_crs(crs_latlon)
 roads["split_ref"] = roads["ref"].str.split(";")
 explode_roads = roads.explode("split_ref")
 explode_roads["split_ref"] = explode_roads["split_ref"].str.strip()
-explode_roads["ref_length"] = explode_roads["split_ref"].apply(
-    lambda x: 0 if x is None else len(x)
-)
 # indicate the first in each set of duplicates, so we only draw one
 explode_roads["first_ref"] = (
     roads["split_ref"]
@@ -70,7 +67,6 @@ table = pa.table(
         "name": pa.array(explode_roads["name"]),
         "fclass": pa.array(explode_roads["fclass"]),
         "ref": pa.array(explode_roads["split_ref"]),
-        "ref_length": pa.array(explode_roads["ref_length"], type=pa.int8()),
         "draw": pa.array(explode_roads["first_ref"], type=pa.int8()),
         "longitude": ak.to_arrow(longitudes, extensionarray=False, list_to32=True),
         "latitude": ak.to_arrow(latitudes, extensionarray=False, list_to32=True),
@@ -85,7 +81,6 @@ pq.write_table(
         "name": "PLAIN",
         "fclass": "PLAIN",
         "ref": "PLAIN",
-        "ref_length": "PLAIN",
         "draw": "PLAIN",
         "longitude": "BYTE_STREAM_SPLIT",
         "latitude": "BYTE_STREAM_SPLIT",
