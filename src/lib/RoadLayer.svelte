@@ -1,5 +1,5 @@
 <script>
-  import { getMapContext, GeoJSON, LineLayer } from 'svelte-maplibre';
+  import { getMapContext, GeoJSON, LineLayer, SymbolLayer } from 'svelte-maplibre';
 
   import { getRoadData } from '../utils/getRoadData';
 
@@ -269,6 +269,96 @@
       }}
   />
 
+  <!-- highway-shield -->
+  <SymbolLayer
+    filter={["all", [">", "ref_length", 0], ["<=", "ref_length", 7], ["in", "ref_prefix", "CR", "BIA", "FS", "PTH", "PR", "TR", "CH"]]}
+    minzoom={10.5}
+    layout={{
+        "text-size": 10,
+        "icon-image": "road_{ref_length}",
+        "icon-rotation-alignment": "viewport",
+        "symbol-spacing": 200,
+        "text-font": ["Noto Sans Regular"],
+        "symbol-placement": {
+          "base": 1,
+          "stops": [[10, "point"], [11, "line"]]
+        },
+        "text-rotation-alignment": "viewport",
+        "icon-size": 1,
+        "text-field": "{ref_prefix} {ref_rest}"
+      }}
+    paint={{
+        "text-color": "rgba(0, 0, 0, 1)"
+      }}
+  />
+
   <!-- highway-shield-us-interstate -->
+  <SymbolLayer
+    filter={["all", [">", "ref_rest_length", 0], ["<=", "ref_rest_length", 3], ["in", "ref_prefix", "I"]]}
+    minzoom={7}
+    layout={{
+        "text-size": 10,
+        "icon-image": "us-interstate_{ref_rest_length}",
+        "icon-rotation-alignment": "viewport",
+        "symbol-spacing": 200,
+        "text-font": ["Noto Sans Regular"],
+        "symbol-placement": {
+          "base": 1,
+          "stops": [[7, "point"], [7, "line"], [8, "line"]]
+        },
+        "text-rotation-alignment": "viewport",
+        "icon-size": 1,
+        "text-field": "{ref_rest}"
+      }}
+    paint={{
+        "text-color": "rgba(0, 0, 0, 1)"
+      }}
+  />
+
+  <!-- highway-shield-us-other (network == "us-highway") -->
+  <SymbolLayer
+    filter={["all", [">", "ref_rest_length", 0], ["<=", "ref_rest_length", 3], ["in", "ref_prefix", "US"]]}
+    minzoom={9}
+    layout={{
+        "text-size": 10,
+        "icon-image": "us-highway_{ref_rest_length}",
+        "icon-rotation-alignment": "viewport",
+        "symbol-spacing": 200,
+        "text-font": ["Noto Sans Regular"],
+        "symbol-placement": {
+          "base": 1,
+          "stops": [[10, "point"], [11, "line"]]
+        },
+        "text-rotation-alignment": "viewport",
+        "icon-size": 1,
+        "text-field": "{ref_rest}"
+      }}
+    paint={{
+        "text-color": "rgba(0, 0, 0, 1)"
+      }}
+  />
+
+  <!-- highway-shield-us-other (network == "us-state") -->
+  <SymbolLayer
+    filter={["all", [">", "ref_length", 0], ["<=", "ref_length", 6], ["in", "ref_prefix", "ND", "SD", "MT", "MN"]]}
+    minzoom={9}
+    layout={{
+        "text-size": 10,
+        "icon-image": "us-state_{ref_length}",
+        "icon-rotation-alignment": "viewport",
+        "symbol-spacing": 200,
+        "text-font": ["Noto Sans Regular"],
+        "symbol-placement": {
+          "base": 1,
+          "stops": [[10, "point"], [11, "line"]]
+        },
+        "text-rotation-alignment": "viewport",
+        "icon-size": 1,
+        "text-field": "{ref_prefix} {ref_rest}"
+      }}
+    paint={{
+        "text-color": "rgba(0, 0, 0, 1)"
+      }}
+  />
 
 </GeoJSON>
