@@ -27,7 +27,7 @@
 
   <!-- highway-motorway-link-casing -->
   <LineLayer
-    filter={["in", "fclass", "motorway_link"]}
+    filter={["all", ["in", "fclass", "motorway_link"], ["==", "draw", 1]]}
     layout={{"line-cap": "butt", "line-join": "round"}}
     paint={{
         "line-color": "#e9ac77",
@@ -41,7 +41,7 @@
 
   <!-- highway-link-casing -->
   <LineLayer
-    filter={["in", "fclass", "primary_link", "secondary_link", "tertiary_link", "trunk_link"]}
+    filter={["all", ["in", "fclass", "primary_link", "secondary_link", "tertiary_link", "trunk_link"], ["==", "draw", 1]]}
     layout={{"line-cap": "butt", "line-join": "round"}}
     paint={{
         "line-color": "#e9ac77",
@@ -54,7 +54,7 @@
 
   <!-- highway-minor-casing (minor starts at 12) -->
   <LineLayer
-    filter={["in", "fclass", "service", "residential", "unclassified", "footway", "path", "cycleway", "pedestrian", "steps", "bridleway", "living_street", "track", "track_grade1", "track_grade2", "track_grade3", "track_grade4", "track_grade5"]}
+    filter={["all", ["in", "fclass", "service", "residential", "unclassified", "footway", "path", "cycleway", "pedestrian", "steps", "bridleway", "living_street", "track", "track_grade1", "track_grade2", "track_grade3", "track_grade4", "track_grade5"], ["==", "draw", 1]]}
     layout={{"line-cap": "butt", "line-join": "round"}}
     paint={ {
         "line-color": "#cfcdca",
@@ -70,7 +70,7 @@
 
   <!-- highway-secondary-tertiary-casing (tertiary starts at 11) -->
   <LineLayer
-    filter={["in", "fclass", "tertiary"]}
+    filter={["all", ["in", "fclass", "tertiary"], ["==", "draw", 1]]}
     layout={{"line-cap": "butt", "line-join": "round"}}
     paint={{
         "line-color": "#e9ac77",
@@ -87,7 +87,7 @@
 
   <!-- highway-secondary-tertiary-casing (secondary starts at 9) -->
   <LineLayer
-    filter={["in", "fclass", "secondary"]}
+    filter={["all", ["in", "fclass", "secondary"], ["==", "draw", 1]]}
     layout={{"line-cap": "butt", "line-join": "round"}}
     paint={{
         "line-color": "#e9ac77",
@@ -104,7 +104,7 @@
 
   <!-- highway-primary-casing -->
   <LineLayer
-    filter={["in", "fclass", "primary"]}
+    filter={["all", ["in", "fclass", "primary"], ["==", "draw", 1]]}
     layout={{"line-cap": "butt", "line-join": "round"}}
     paint={{
         "line-color": "#e9ac77",
@@ -120,7 +120,7 @@
 
   <!-- highway-trunk-casing -->
   <LineLayer
-    filter={["in", "fclass", "trunk"]}
+    filter={["all", ["in", "fclass", "trunk"], ["==", "draw", 1]]}
     layout={{"line-cap": "butt", "line-join": "round"}}
     paint={{
         "line-color": "#e9ac77",
@@ -136,7 +136,7 @@
 
   <!-- highway-motorway-casing -->
   <LineLayer
-    filter={["in", "fclass", "motorway"]}
+    filter={["all", ["in", "fclass", "motorway"], ["==", "draw", 1]]}
     layout={{"line-cap": "butt", "line-join": "round"}}
     paint={{
         "line-color": "#e9ac77",
@@ -152,7 +152,7 @@
 
   <!-- highway-motorway-link -->
   <LineLayer
-    filter={["in", "fclass", "motorway_link"]}
+    filter={["all", ["in", "fclass", "motorway_link"], ["==", "draw", 1]]}
     layout={{"line-cap": "round", "line-join": "round"}}
     paint={{
         "line-color": "#fc8",
@@ -165,7 +165,7 @@
 
   <!-- highway-link -->
   <LineLayer
-    filter={["in", "fclass", "primary_link", "secondary_link", "tertiary_link", "trunk_link"]}
+    filter={["all", ["in", "fclass", "primary_link", "secondary_link", "tertiary_link", "trunk_link"], ["==", "draw", 1]]}
     layout={{"line-cap": "round", "line-join": "round"}}
     paint={{
         "line-color": "#fea",
@@ -178,7 +178,7 @@
 
   <!-- highway-minor (minor starts at 12) -->
   <LineLayer
-    filter={["in", "fclass", "service", "residential", "unclassified", "footway", "path", "cycleway", "pedestrian", "steps", "bridleway", "living_street", "track", "track_grade1", "track_grade2", "track_grade3", "track_grade4", "track_grade5"]}
+    filter={["all", ["in", "fclass", "service", "residential", "unclassified", "footway", "path", "cycleway", "pedestrian", "steps", "bridleway", "living_street", "track", "track_grade1", "track_grade2", "track_grade3", "track_grade4", "track_grade5"], ["==", "draw", 1]]}
     layout={{"line-cap": "round", "line-join": "round"}}
     paint={{
         "line-color": "#fff",
@@ -195,7 +195,7 @@
 
   <!-- highway-secondary-tertiary (tertiary starts at 11) -->
   <LineLayer
-    filter={["in", "fclass", "tertiary"]}
+    filter={["all", ["in", "fclass", "tertiary"], ["==", "draw", 1]]}
     layout={{"line-cap": "round", "line-join": "round"}}
     paint={{
         "line-color": "#fea",
@@ -212,7 +212,7 @@
 
   <!-- highway-secondary-tertiary (secondary starts at 9) -->
   <LineLayer
-    filter={["in", "fclass", "secondary"]}
+    filter={["all", ["in", "fclass", "secondary"], ["==", "draw", 1]]}
     layout={{"line-cap": "round", "line-join": "round"}}
     paint={{
         "line-color": "#fea",
@@ -229,7 +229,7 @@
 
   <!-- highway-primary -->
   <LineLayer
-    filter={["in", "fclass", "primary"]}
+    filter={["all", ["in", "fclass", "primary"], ["==", "draw", 1]]}
     layout={{"line-cap": "round", "line-join": "round"}}
     paint={{
         "line-color": "#fea",
@@ -243,7 +243,7 @@
 
   <!-- highway-trunk -->
   <LineLayer
-    filter={["in", "fclass", "trunk"]}
+    filter={["all", ["in", "fclass", "trunk"], ["==", "draw", 1]]}
     layout={{"line-cap": "round", "line-join": "round"}}
     paint={{
         "line-color": "#fea",
@@ -257,7 +257,7 @@
 
   <!-- highway-motorway -->
   <LineLayer
-    filter={["in", "fclass", "motorway"]}
+    filter={["all", ["in", "fclass", "motorway"], ["==", "draw", 1]]}
     layout={{"line-cap": "round", "line-join": "round"}}
     paint={{
         "line-color": "#fc8",
@@ -268,5 +268,7 @@
         "line-opacity": 0.5
       }}
   />
+
+  <!-- highway-shield-us-interstate -->
 
 </GeoJSON>

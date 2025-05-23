@@ -17,6 +17,9 @@ export const getRoadData = async (
       properties: {
         name: road.name,
         fclass: road.fclass,
+        ref: road.ref,
+        ref_length: road.ref_length,
+        draw: road.draw,
       },
     })),
   };
