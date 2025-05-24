@@ -68,17 +68,25 @@
     onmouseenter={mouseEnter}
     onmouseleave={mouseLeave}
     onclick={handleClick}
-    minzoom={9}
     paint={{
-    "circle-color": "hsl(214, 93%, 55%)",
-    "circle-stroke-width": [
-    "interpolate", ["linear"], ["zoom"], 9, 0, 12, 0.5, 17, 2
-    ],
-    "circle-stroke-color": "hsl(0, 15%, 100%)",
-    "circle-radius": [
-    "interpolate", ["linear"], ["zoom"], 9, 2, 12, 3, 17, 8
-    ]
-    }}
+        "circle-color": "cyan",
+        "circle-stroke-width": [
+          "interpolate", ["linear"], ["zoom"], 11, 0, 13, 0.5, 17, 2
+        ],
+        "circle-stroke-color": "black",
+        "circle-radius": [
+          "interpolate", ["linear"], ["zoom"], 8, 0, 13, 3, 17, 8
+        ],
+        "circle-stroke-opacity": {
+          "base": 1,
+          "stops": [[11, 0], [13, 1], [20, 1]]
+        },
+        "circle-opacity": {
+          "base": 1,
+          "stops": [[8, 0], [10, 1], [20, 1]]
+        }
+      }}
+    beforeLayerType="symbol"
   >
     <Popup>
       <span class="popupCopyButton" bind:this={popupCopyButton} onclick={handleCopy}>{@html copyIcon}</span><br>
