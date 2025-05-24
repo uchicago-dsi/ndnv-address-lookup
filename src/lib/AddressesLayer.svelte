@@ -86,6 +86,7 @@
           "stops": [[8, 0], [10, 1], [20, 1]]
         }
       }}
+    beforeLayerType="symbol"
   >
     <Popup>
       <span class="popupCopyButton" bind:this={popupCopyButton} onclick={handleCopy}>{@html copyIcon}</span><br>

@@ -18,6 +18,14 @@
     type: "geojson",
     data: `${window.location.origin}/counties.geojson`
   };
+  mapStyle.sources.states = {
+    type: "geojson",
+    data: `${window.location.origin}/states.geojson`
+  };
+  mapStyle.sources.places = {
+    type: "geojson",
+    data: `${window.location.origin}/osm-places.geojson`
+  };
 
 </script>
 

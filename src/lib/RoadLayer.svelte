@@ -36,6 +36,7 @@
           "stops": [[12, 1], [13, 3], [14, 4], [20, 15]]
         }
       }}
+    beforeLayerType="symbol"
   />
 
   <!-- highway-link-casing -->
@@ -49,6 +50,7 @@
           "stops": [[12, 1], [13, 3], [14, 4], [20, 15]]
         }
       }}
+    beforeLayerType="symbol"
   />
 
   <!-- highway-minor-casing (minor starts at 12) -->
@@ -66,6 +68,7 @@
           "stops": [[12, 0.5], [13, 1], [14, 4], [20, 15]]
         }
       }}
+    beforeLayerType="symbol"
   />
 
   <!-- highway-secondary-tertiary-casing (tertiary starts at 11) -->
@@ -84,6 +87,7 @@
           "stops": [[8, 1.5], [20, 17]]
         }
       }}
+    beforeLayerType="symbol"
   />
 
   <!-- highway-secondary-tertiary-casing (secondary starts at 9) -->
@@ -102,6 +106,7 @@
           "stops": [[8, 1.5], [20, 17]]
         }
       }}
+    beforeLayerType="symbol"
   />
 
   <!-- highway-primary-casing -->
@@ -119,6 +124,7 @@
           "stops": [[7, 0], [8, 0.6], [9, 1.5], [20, 22]]
         }
       }}
+    beforeLayerType="symbol"
   />
 
   <!-- highway-trunk-casing -->
@@ -136,6 +142,7 @@
           "stops": [[5, 0], [6, 0.6], [7, 1.5], [20, 22]]
         }
       }}
+    beforeLayerType="symbol"
   />
 
   <!-- highway-motorway-casing -->
@@ -153,6 +160,7 @@
           "stops": [[4, 0], [5, 0.4], [6, 0.6], [7, 1.5], [20, 22]]
         }
       }}
+    beforeLayerType="symbol"
   />
 
   <!-- highway-motorway-link -->
@@ -167,6 +175,7 @@
           "stops": [[12.5, 0], [13, 1.5], [14, 2.5], [20, 11.5]]
         }
       }}
+    beforeLayerType="symbol"
   />
 
   <!-- highway-link -->
@@ -181,6 +190,7 @@
           "stops": [[12.5, 0], [13, 1.5], [14, 2.5], [20, 11.5]]
         }
       }}
+    beforeLayerType="symbol"
   />
 
   <!-- highway-minor (minor starts at 12) -->
@@ -199,6 +209,7 @@
           "stops": [[11.5, 0], [14, 2.5], [20, 11.5]]
         }
       }}
+    beforeLayerType="symbol"
   />
 
   <!-- highway-secondary-tertiary (tertiary starts at 11) -->
@@ -217,6 +228,7 @@
           "stops": [[6.5, 0], [8, 0.5], [20, 13]]
         }
       }}
+    beforeLayerType="symbol"
   />
 
   <!-- highway-secondary-tertiary (secondary starts at 9) -->
@@ -235,6 +247,7 @@
           "stops": [[6.5, 0], [8, 0.5], [20, 13]]
         }
       }}
+    beforeLayerType="symbol"
   />
 
   <!-- highway-primary -->
@@ -250,6 +263,7 @@
           "stops": [[8.5, 0], [9, 0.5], [20, 18]]
         }
       }}
+    beforeLayerType="symbol"
   />
 
   <!-- highway-trunk -->
@@ -265,6 +279,7 @@
           "stops": [[4, 0], [7, 0.5], [20, 18]]
         }
       }}
+    beforeLayerType="symbol"
   />
 
   <!-- highway-motorway -->
@@ -280,6 +295,7 @@
           "stops": [[4, 0], [7, 0.5], [20, 18]]
         }
       }}
+    beforeLayerType="symbol"
   />
 
   <!-- highway-name-path -->
