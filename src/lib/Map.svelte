@@ -26,6 +26,10 @@
     type: "geojson",
     data: `${window.location.origin}/osm-places.geojson`
   };
+  mapStyle.sources.poi = {
+    type: "geojson",
+    data: `${window.location.origin}/osm-poi-pofw.geojson`
+  };
 
 </script>
 
