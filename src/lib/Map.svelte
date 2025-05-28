@@ -3,6 +3,8 @@
   import 'maplibre-gl/dist/maplibre-gl.css';
 
   import AddressLayer from './AddressesLayer.svelte';
+  import RoadLayer from './RoadLayer.svelte';
+  import WaterLayer from './WaterLayer.svelte';
   import mapStyle from '../data/map-style.json';
 
   // URL references in the map style JSON must be absolute
@@ -16,6 +18,22 @@
     type: "geojson",
     data: `${window.location.origin}/counties.geojson`
   };
+  mapStyle.sources.states = {
+    type: "geojson",
+    data: `${window.location.origin}/states.geojson`
+  };
+  mapStyle.sources.railways = {
+    type: "geojson",
+    data: `${window.location.origin}/osm-railways.geojson`
+  };
+  mapStyle.sources.places = {
+    type: "geojson",
+    data: `${window.location.origin}/osm-places.geojson`
+  };
+  mapStyle.sources.poi = {
+    type: "geojson",
+    data: `${window.location.origin}/osm-poi-pofw.geojson`
+  };
 
 </script>
 
@@ -25,6 +43,8 @@
   standardControls
   bounds={[-104.5181265794389, 45.63232713888373, -96.06887947161051, 49.2702273475217]}
   >
+  <WaterLayer />
+  <RoadLayer />
   <AddressLayer />
 </MapLibre>
 
