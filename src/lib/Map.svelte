@@ -41,6 +41,8 @@
   class="map"
   style={mapStyle}
   standardControls
+  pitchWithRotate={false}
+  dragRotate={false}
   bounds={[-104.5181265794389, 45.63232713888373, -96.06887947161051, 49.2702273475217]}
   >
   <WaterLayer />
