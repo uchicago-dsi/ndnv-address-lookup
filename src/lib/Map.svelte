@@ -35,6 +35,16 @@
     data: `${window.location.origin}/osm-poi-pofw.geojson`
   };
 
+  let theMap;
+  function handleOnLoad(map) {
+    theMap = map;
+  }
+
+  export function flyTo(item) {
+    if (theMap) {
+      theMap.flyTo({ center: item.coords, zoom: item.zoom });
+    }
+  }
 </script>
 
 <MapLibre 
@@ -44,6 +54,7 @@
   pitchWithRotate={false}
   dragRotate={false}
   bounds={[-104.5181265794389, 45.63232713888373, -96.06887947161051, 49.2702273475217]}
+  onload={handleOnLoad}
   >
   <WaterLayer />
   <RoadLayer />

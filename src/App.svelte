@@ -1,5 +1,14 @@
 <script>
   import Map from './lib/Map.svelte';
+  import SearchBox from './lib/SearchBox.svelte';
+
+  let map;
+
+  function handleFlyTo(item) {
+    map.flyTo(item);
+  }
+  
 </script>
 
-<Map />
+<Map bind:this={map} />
+<SearchBox onSelect={handleFlyTo} />
