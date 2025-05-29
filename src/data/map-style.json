@@ -26,12 +26,6 @@
       }
     },
     {
-      "id": "usgs",
-      "type": "raster",
-      "source": "usgs",
-      "maxzoom": 24
-    },
-    {
       "id": "states",
       "type": "line",
       "source": "states",
