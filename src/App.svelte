@@ -5,7 +5,9 @@
   let map;
 
   function handleFlyTo(item) {
-    map.flyTo(item);
+    if (map !== null) {
+      map.flyTo(item);
+    }
   }
   
 </script>

@@ -7,16 +7,27 @@
 
   import Fuse from 'fuse.js';
 
-  const places = [
-    { name: "Fort Yates", coords: [-100.63404003758103, 46.089099445920105], zoom: 15 },
-    { name: "Fott Totten", coords: [-98.99062524672397, 47.977573309592515], zoom: 15 },
-  ];
+  import nd_zipcodes from '../data/ND-zipcodes.json';
+  import nd_places from '../data/ND-places.json';
+
+  const places = [...nd_zipcodes, ...nd_places];
   const fuse = new Fuse(places, { keys: ["name"] });
 
   let searchBox;
   let query = "";
   let results = [];
   export let onSelect;
+
+  function handleKeyDown(event) {
+    if (event.key === "Enter"  ||  event.keyCode === 13) {
+      for (const item of places) {
+        if (query == item.name) {
+          results = [];
+          onSelect(item);
+        }
+      }
+    }
+  }
 
   function handleInput(event) {
     query = event.target.value;
@@ -35,7 +46,7 @@
 </script>
 
 <div bind:this={searchBox} class="search-box">
-  <Input bind:value={query} oninput={handleInput} placeholder="Search..." />
+  <Input bind:value={query} oninput={handleInput} onkeydown={handleKeyDown} placeholder="Search for city or zip code..." />
   <Menu class="search-results">
     {#if results.length != 0}
     <List>
