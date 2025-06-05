@@ -20,11 +20,11 @@
 
   function handleKeyDown(event) {
     if (event.key === "Enter"  ||  event.keyCode === 13) {
-      for (const item of places) {
-        if (query == item.name) {
-          results = [];
-          onSelect(item);
-        }
+      const myresults = fuse.search(query);
+      if (myresults.length != 0) {
+        query = myresults[0].item.name;
+        results = [];
+        onSelect(myresults[0].item);
       }
     }
   }
