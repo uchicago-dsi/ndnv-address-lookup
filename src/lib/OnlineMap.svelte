@@ -84,6 +84,12 @@
       bounds: [-104.5181265794389, 45.63232713888373, -96.06887947161051, 49.2702273475217],
     });
 
+    // https://stackoverflow.com/a/76225499/1623645
+    map.setMaxPitch(0);
+    map.setMinPitch(0);
+    map.touchPitch.disable();
+    map.dragRotate.disable();
+
     map.addControl(new NavigationControl(), "top-left");
     map.addControl(new ScaleControl(), "bottom-left");
     map.addControl(new GeolocateControl(), "top-left");
