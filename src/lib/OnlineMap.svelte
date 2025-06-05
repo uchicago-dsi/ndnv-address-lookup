@@ -13,7 +13,7 @@
   function getPopupData(p) {
     let isMuni = p.muni != "Unincorporated"  &&  p.muni != "Undefined";
     let popupData = {
-      streetAddress: (p.num >= 0 ? p.num.toString() + " " : "") + `${p.street}, ${isMuni ? p.muni : p.msag}`,
+      streetAddress: (p.num >= 0 ? p.num.toString() + " " : "") + p.street,
       cityHeader: isMuni ? "Municipality" : "911 Community (MSAG)",
       city: isMuni ? p.muni : p.msag,
       zip: p.zip,
