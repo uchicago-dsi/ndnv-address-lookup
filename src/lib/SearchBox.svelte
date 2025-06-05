@@ -53,7 +53,7 @@
     {#if results.length != 0}
     <List>
       {#each results.slice(0, MAX_SEARCH_RESULTS) as result}
-        <Item onSMUIAction={() => {results = []; onSelect(result);}}><Text>{result.name}</Text></Item>
+        <Item onSMUIAction={() => {query = result.name; results = []; onSelect(result);}}><Text>{result.name}</Text></Item>
       {/each}
     </List>
     {/if}
@@ -76,6 +76,7 @@
   /* match the style in the Menu/List */
   font-size: 16px;
   color: rgba(0, 0, 0, 0.87);
+  background-color: white;
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 16px;
