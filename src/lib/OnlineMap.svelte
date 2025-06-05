@@ -35,16 +35,18 @@
         onclick='navigator.clipboard.writeText(${JSON.stringify(popupData.addrToCopy)}); this.innerHTML = ${JSON.stringify(copiedIcon)};'
         style="display: inline-flex; justify-content: center; width: 100%;"
         >${copyIcon}</span><br>
-      <strong>Street address:</strong> ${popupData?.streetAddress}<br>
-      <strong>${popupData?.cityHeader}:</strong> ${popupData?.city}<br>
-      <strong>Zip code:</strong> ${popupData?.zip}<br><br>
-      <details>
-        <summary><strong>Source</strong></summary>
-        <strong>${popupData?.src_title}</strong><br>
-        <strong>Name:</strong> ${popupData?.src_name}<br>
-        <strong>Phone:</strong> ${popupData?.src_phone}<br>
-        <strong>Email:</strong> <a href="mailto:${popupData?.src_email}">${popupData?.src_email}</a>
-      </details>
+      <div style="color: black;">
+        <strong>Street address:</strong> ${popupData?.streetAddress}<br>
+        <strong>${popupData?.cityHeader}:</strong> ${popupData?.city}<br>
+        <strong>Zip code:</strong> ${popupData?.zip}<br><br>
+        <details>
+          <summary><strong>Source</strong></summary>
+          <strong>${popupData?.src_title}</strong><br>
+          <strong>Name:</strong> ${popupData?.src_name}<br>
+          <strong>Phone:</strong> ${popupData?.src_phone}<br>
+          <strong>Email:</strong> <a href="mailto:${popupData?.src_email}">${popupData?.src_email}</a>
+        </details>
+      </div>
     `;
   }
 
