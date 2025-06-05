@@ -76,6 +76,7 @@
   /* match the style in the Menu/List */
   font-size: 16px;
   color: rgba(0, 0, 0, 0.87);
+  background-color: white;
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 16px;
