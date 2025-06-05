@@ -51,7 +51,7 @@
     {#if results.length != 0}
     <List>
       {#each results.slice(0, 5) as result}
-        <Item onSMUIAction={() => {onSelect(result);}}><Text>{result.name}</Text></Item>
+        <Item onSMUIAction={() => {results = []; onSelect(result);}}><Text>{result.name}</Text></Item>
       {/each}
     </List>
     {/if}
