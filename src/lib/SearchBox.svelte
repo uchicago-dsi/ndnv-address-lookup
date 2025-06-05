@@ -13,6 +13,8 @@
   const places = [...nd_zipcodes, ...nd_places];
   const fuse = new Fuse(places, { keys: ["name"] });
 
+  const MAX_SEARCH_RESULTS = 5;
+
   let searchBox;
   let query = "";
   let results = [];
@@ -20,18 +22,18 @@
 
   function handleKeyDown(event) {
     if (event.key === "Enter"  ||  event.keyCode === 13) {
-      for (const item of places) {
-        if (query == item.name) {
-          results = [];
-          onSelect(item);
-        }
+      const myresults = fuse.search(query, { limit: 1 });
+      if (myresults.length != 0) {
+        query = myresults[0].item.name;
+        results = [];
+        onSelect(myresults[0].item);
       }
     }
   }
 
   function handleInput(event) {
     query = event.target.value;
-    results = fuse.search(query).map(result => result.item);
+    results = fuse.search(query, { limit: MAX_SEARCH_RESULTS }).map(result => result.item);
   }
 
   // clicks outside of the whole search region should hide the matches
@@ -50,8 +52,8 @@
   <Menu class="search-results">
     {#if results.length != 0}
     <List>
-      {#each results.slice(0, 5) as result}
-        <Item onSMUIAction={() => {onSelect(result);}}><Text>{result.name}</Text></Item>
+      {#each results.slice(0, MAX_SEARCH_RESULTS) as result}
+        <Item onSMUIAction={() => {results = []; onSelect(result);}}><Text>{result.name}</Text></Item>
       {/each}
     </List>
     {/if}
@@ -63,7 +65,8 @@
   position: absolute;
   top: 10px;
   right: 10px;
-  width: 400px;
+  width: calc(100vw - 60px);
+  max-width: 400px;
 }
 
 :global(.search-box input) {
