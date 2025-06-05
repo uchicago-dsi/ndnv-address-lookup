@@ -12,8 +12,18 @@
 
   function getPopupData(p) {
     let isMuni = p.muni != "Unincorporated"  &&  p.muni != "Undefined";
+    let unit;
+    if (p.unit == "") {
+      unit = "";
+    }
+    else if (p.unit.startsWith("APT ")) {
+      unit = `, Apt ${p.unit.substring(4)}`;
+    }
+    else {
+      unit = `, Unit ${p.unit}`;
+    }
     let popupData = {
-      streetAddress: (p.num >= 0 ? p.num.toString() + " " : "") + p.street,
+      streetAddress: (p.num >= 0 ? p.num.toString() + " " : "") + p.street + unit,
       cityHeader: isMuni ? "Municipality" : "911 Community (MSAG)",
       city: isMuni ? p.muni : p.msag,
       zip: p.zip,
@@ -78,13 +88,13 @@
     map.addControl(new ScaleControl(), "bottom-left");
     map.addControl(new FullscreenControl(), "top-left");
 
-    map.on("mouseenter", "911-addresses-7t7pj2", () => {
+    map.on("mouseenter", "911-addresses-94gjyj", () => {
       map.getCanvas().style.cursor = "pointer";
     });
-    map.on("mouseleave", "911-addresses-7t7pj2", () => {
+    map.on("mouseleave", "911-addresses-94gjyj", () => {
       map.getCanvas().style.cursor = "";
     });
-    map.on("click", "911-addresses-7t7pj2", handleClick);
+    map.on("click", "911-addresses-94gjyj", handleClick);
 
   });
 

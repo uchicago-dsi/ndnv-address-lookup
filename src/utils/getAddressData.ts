@@ -17,6 +17,7 @@ export const getAddressData = async (
       properties: {
         num: addr.num,
         street: addr.street,
+        unit: addr.unit,
         muni: addr.muni,
         msag: addr.msag,
         zip: addr.zip,
