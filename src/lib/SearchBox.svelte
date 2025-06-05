@@ -63,7 +63,8 @@
   position: absolute;
   top: 10px;
   right: 10px;
-  width: 400px;
+  width: calc(100vw - 60px);
+  max-width: 400px;
 }
 
 :global(.search-box input) {
