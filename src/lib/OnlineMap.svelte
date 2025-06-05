@@ -1,5 +1,5 @@
 <script>
-  import { Map, NavigationControl, ScaleControl, FullscreenControl, Popup } from 'mapbox-gl';
+  import { Map, NavigationControl, ScaleControl, FullscreenControl, GeolocateControl, Popup } from 'mapbox-gl';
   import 'mapbox-gl/dist/mapbox-gl.css';
   import { onMount } from 'svelte';
 
@@ -86,6 +86,7 @@
 
     map.addControl(new NavigationControl(), "top-left");
     map.addControl(new ScaleControl(), "bottom-left");
+    map.addControl(new GeolocateControl(), "top-left");
     map.addControl(new FullscreenControl(), "top-left");
 
     map.on("mouseenter", "911-addresses-94gjyj", () => {
