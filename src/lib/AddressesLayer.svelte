@@ -3,8 +3,6 @@
 
   import { getAddressData } from '../utils/getAddressData';
   import sourceList from "../data/source-list.json";
-  import copyIcon from '../assets/copy-icon.svg?raw';
-  import copiedIcon from '../assets/copied-icon.svg?raw'
 
   const { map, loaded } = $derived(getMapContext());
   $effect(() => {
@@ -57,13 +55,13 @@
     popupData.addrToCopy = `${popupData.streetAddress}, ${popupData.city}, ND, ${popupData.zip}`;
 
     if (popupCopyButton !== null) {
-      popupCopyButton.innerHTML = copyIcon;
+      popupCopyButton.innerHTML = "<a>COPY TO CLIPBOARD</a>";
     }
   }
 
   function handleCopy(event) {
     navigator.clipboard.writeText(popupData.addrToCopy);
-    popupCopyButton.innerHTML = copiedIcon;
+    popupCopyButton.innerHTML = "COPIED!";
   }
 
 </script>
@@ -99,7 +97,9 @@
     beforeLayerType="symbol"
   >
     <Popup>
-      <span class="popupCopyButton" bind:this={popupCopyButton} onclick={handleCopy}>{@html copyIcon}</span><br>
+      <div style="margin-bottom: 10px;">
+        <span class="popupCopyButton" bind:this={popupCopyButton} onclick={handleCopy}><a>COPY TO CLIPBOARD</a></span>
+      </div>
       <div style="color: black;">
         <strong>Street address:</strong> {popupData?.streetAddress}<br>
         <strong>{popupData?.cityHeader}:</strong> {popupData?.city}<br>
@@ -121,5 +121,9 @@
     display: inline-flex;
     justify-content: center;
     width: 100%;
+    font-weight: bold;
+  }
+  :global(.popupCopyButton a) {
+    font-weight: bold;
   }
 </style>

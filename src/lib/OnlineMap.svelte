@@ -1,11 +1,9 @@
 <script>
-  import { Map, NavigationControl, ScaleControl, FullscreenControl, Popup } from 'mapbox-gl';
+  import { Map, NavigationControl, ScaleControl, FullscreenControl, GeolocateControl, Popup } from 'mapbox-gl';
   import 'mapbox-gl/dist/mapbox-gl.css';
   import { onMount } from 'svelte';
 
   import sourceList from "../data/source-list.json";
-  import copyIcon from '../assets/copy-icon.svg?raw';
-  import copiedIcon from '../assets/copied-icon.svg?raw'
 
   let map;
   let mapContainer;
@@ -40,11 +38,10 @@
     const popupData = getPopupData(properties);
 
     return `
-      <span
+      <div style="margin-bottom: 10px;"><span
         class="popupCopyButton"
-        onclick='navigator.clipboard.writeText(${JSON.stringify(popupData.addrToCopy)}); this.innerHTML = ${JSON.stringify(copiedIcon)};'
-        style="display: inline-flex; justify-content: center; width: 100%;"
-        >${copyIcon}</span><br>
+        onclick='navigator.clipboard.writeText(${JSON.stringify(popupData.addrToCopy)}); this.innerHTML = "COPIED!";'
+        ><a>COPY TO CLIPBOARD</a></span></div>
       <div style="color: black;">
         <strong>Street address:</strong> ${popupData?.streetAddress}<br>
         <strong>${popupData?.cityHeader}:</strong> ${popupData?.city}<br>
@@ -68,7 +65,7 @@
     const coordinates = event.features[0].geometry.coordinates.slice();
     const properties = event.features[0].properties;
 
-    return new Popup({maxWidth: "none"})
+    return new Popup({ maxWidth: "none", closeButton: false })
       .setLngLat(coordinates)
       .setHTML(popupHTML(properties))
       .addTo(map);
@@ -84,8 +81,15 @@
       bounds: [-104.5181265794389, 45.63232713888373, -96.06887947161051, 49.2702273475217],
     });
 
+    // https://stackoverflow.com/a/76225499/1623645
+    map.setMaxPitch(0);
+    map.setMinPitch(0);
+    map.touchPitch.disable();
+    map.dragRotate.disable();
+
     map.addControl(new NavigationControl(), "top-left");
     map.addControl(new ScaleControl(), "bottom-left");
+    map.addControl(new GeolocateControl(), "top-left");
     map.addControl(new FullscreenControl(), "top-left");
 
     map.on("mouseenter", "911-addresses-94gjyj", () => {
@@ -112,5 +116,15 @@
     position: absolute;
     width: 100%;
     height: 100%;
+  }
+
+  :global(.popupCopyButton) {
+    display: inline-flex;
+    justify-content: center;
+    width: 100%;
+    font-weight: bold;
+  }
+  :global(.popupCopyButton a) {
+    font-weight: bold;
   }
 </style>

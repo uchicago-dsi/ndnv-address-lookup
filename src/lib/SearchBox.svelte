@@ -8,16 +8,20 @@
   import Fuse from 'fuse.js';
 
   import nd_zipcodes from '../data/ND-zipcodes.json';
-  import nd_places from '../data/ND-places.json';
+  import nd_cities from '../data/ND-cities.json';
+  import nd_townships from '../data/ND-townships.json';
+  import nd_counties from '../data/ND-counties.json';
+  import nd_reservations from '../data/ND-reservations.json';
 
-  const places = [...nd_zipcodes, ...nd_places];
-  const fuse = new Fuse(places, { keys: ["name"] });
+  const places = [...nd_zipcodes, ...nd_cities, ...nd_townships, ...nd_counties, ...nd_reservations];
+  const fuse = new Fuse(places, { keys: ["name"], threshold: 0.2 });
 
-  const MAX_SEARCH_RESULTS = 5;
+  const MAX_SEARCH_RESULTS = 10;
 
   let searchBox;
   let query = "";
   let results = [];
+  let sayNoResultsFound = false;
   export let onSelect;
 
   function handleKeyDown(event) {
@@ -28,12 +32,16 @@
         results = [];
         onSelect(myresults[0].item);
       }
+      else {
+        sayNoResultsFound = true;
+      }
     }
   }
 
   function handleInput(event) {
     query = event.target.value;
     results = fuse.search(query, { limit: MAX_SEARCH_RESULTS }).map(result => result.item);
+    sayNoResultsFound = false;
   }
 
   // clicks outside of the whole search region should hide the matches
@@ -42,13 +50,14 @@
       if (results.length != 0  &&  searchBox !== null  &&  !searchBox.contains(event.target)) {
         results = [];
       }
+      sayNoResultsFound = false;
     });
   });
 
 </script>
 
 <div bind:this={searchBox} class="search-box">
-  <Input bind:value={query} oninput={handleInput} onkeydown={handleKeyDown} placeholder="Search for city or zip code..." />
+  <Input bind:value={query} oninput={handleInput} onkeydown={handleKeyDown} placeholder="Search zip code, city, county, or reservation..."/>
   <Menu class="search-results">
     {#if results.length != 0}
     <List>
@@ -56,6 +65,8 @@
         <Item onSMUIAction={() => {query = result.name; results = []; onSelect(result);}}><Text>{result.name}</Text></Item>
       {/each}
     </List>
+    {:else if sayNoResultsFound}
+        <Item><Text>(no results found)</Text></Item>
     {/if}
   </Menu>
 </div>
