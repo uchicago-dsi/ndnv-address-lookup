@@ -4,8 +4,6 @@
   import { onMount } from 'svelte';
 
   import sourceList from "../data/source-list.json";
-  import copyIcon from '../assets/copy-icon.svg?raw';
-  import copiedIcon from '../assets/copied-icon.svg?raw'
 
   let map;
   let mapContainer;
@@ -40,11 +38,10 @@
     const popupData = getPopupData(properties);
 
     return `
-      <span
+      <div style="margin-bottom: 10px;"><span
         class="popupCopyButton"
-        onclick='navigator.clipboard.writeText(${JSON.stringify(popupData.addrToCopy)}); this.innerHTML = ${JSON.stringify(copiedIcon)};'
-        style="display: inline-flex; justify-content: center; width: 100%;"
-        >${copyIcon}</span><br>
+        onclick='navigator.clipboard.writeText(${JSON.stringify(popupData.addrToCopy)}); this.innerHTML = "COPIED!";'
+        ><a>COPY TO CLIPBOARD</a></span></div>
       <div style="color: black;">
         <strong>Street address:</strong> ${popupData?.streetAddress}<br>
         <strong>${popupData?.cityHeader}:</strong> ${popupData?.city}<br>
@@ -68,7 +65,7 @@
     const coordinates = event.features[0].geometry.coordinates.slice();
     const properties = event.features[0].properties;
 
-    return new Popup({maxWidth: "none"})
+    return new Popup({ maxWidth: "none", closeButton: false })
       .setLngLat(coordinates)
       .setHTML(popupHTML(properties))
       .addTo(map);
@@ -119,5 +116,15 @@
     position: absolute;
     width: 100%;
     height: 100%;
+  }
+
+  :global(.popupCopyButton) {
+    display: inline-flex;
+    justify-content: center;
+    width: 100%;
+    font-weight: bold;
+  }
+  :global(.popupCopyButton a) {
+    font-weight: bold;
   }
 </style>
