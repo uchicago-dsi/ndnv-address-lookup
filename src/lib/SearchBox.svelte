@@ -14,9 +14,9 @@
   import nd_reservations from '../data/ND-reservations.json';
 
   const places = [...nd_zipcodes, ...nd_cities, ...nd_townships, ...nd_counties, ...nd_reservations];
-  const fuse = new Fuse(places, { keys: ["name"] });
+  const fuse = new Fuse(places, { keys: ["name"], threshold: 0.2 });
 
-  const MAX_SEARCH_RESULTS = 5;
+  const MAX_SEARCH_RESULTS = 10;
 
   let searchBox;
   let query = "";
