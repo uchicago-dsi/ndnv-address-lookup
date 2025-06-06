@@ -1,0 +1,7 @@
+[
+  {"name": "Fort Berthold Reservation", "coords": [-102.27803, 47.7428], "zoom": 9},
+  {"name": "Lake Traverse Reservation", "coords": [-97.26352, 45.96699], "zoom": 9},
+  {"name": "Spirit Lake Reservation", "coords": [-98.88367, 47.91068], "zoom": 9},
+  {"name": "Standing Rock Reservation", "coords": [-101.04095, 46.11227], "zoom": 9},
+  {"name": "Turtle Mountain Reservation", "coords": [-99.7885, 48.84886], "zoom": 9}
+]
