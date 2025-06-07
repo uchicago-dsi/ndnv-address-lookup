@@ -1,7 +1,6 @@
 <script>
   import { getMapContext, GeoJSON, CircleLayer, Popup } from 'svelte-maplibre';
 
-  import { getAddressData } from '../utils/getAddressData';
   import sourceList from "../data/source-list.json";
   import { parquetMetadata, parquetRead } from "hyparquet";
   import { compressors } from "hyparquet-compressors";
