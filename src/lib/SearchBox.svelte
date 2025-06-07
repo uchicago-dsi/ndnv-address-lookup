@@ -22,6 +22,7 @@
   let query = "";
   let results = [];
   let sayNoResultsFound = false;
+  let resultsList = null;
   export let onSelect;
 
   function handleKeyDown(event) {
@@ -41,6 +42,9 @@
   function handleInput(event) {
     query = event.target.value;
     results = fuse.search(query, { limit: MAX_SEARCH_RESULTS }).map(result => result.item);
+    if (resultsList !== null) {
+      resultsList.getElement().style.display = "";
+    }
     sayNoResultsFound = false;
   }
 
@@ -54,15 +58,21 @@
     });
   });
 
+  function handleSelect(result) {
+    query = result.name;
+    onSelect(result);
+    resultsList.getElement().style.display = "none";
+  }
+
 </script>
 
 <div bind:this={searchBox} class="search-box">
   <Input bind:value={query} oninput={handleInput} onkeydown={handleKeyDown} placeholder="Search zip code, city, county, or reservation..."/>
   <Menu class="search-results">
     {#if results.length != 0}
-    <List>
+    <List bind:this={resultsList}>
       {#each results.slice(0, MAX_SEARCH_RESULTS) as result}
-        <Item onSMUIAction={() => {query = result.name; results = []; onSelect(result);}}><Text>{result.name}</Text></Item>
+        <Item onSMUIAction={() => { handleSelect(result); }}><Text>{result.name}</Text></Item>
       {/each}
     </List>
     {:else if sayNoResultsFound}
