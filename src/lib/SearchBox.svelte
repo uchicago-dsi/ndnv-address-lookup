@@ -8,12 +8,12 @@
   import Fuse from 'fuse.js';
 
   import nd_zipcodes from '../data/ND-zipcodes.json';
-  import nd_cities from '../data/ND-cities.json';
+  import nd_places from '../data/ND-places.json';
   import nd_townships from '../data/ND-townships.json';
   import nd_counties from '../data/ND-counties.json';
   import nd_reservations from '../data/ND-reservations.json';
 
-  const places = [...nd_zipcodes, ...nd_cities, ...nd_townships, ...nd_counties, ...nd_reservations];
+  const places = [...nd_zipcodes, ...nd_places, ...nd_townships, ...nd_counties, ...nd_reservations];
   const fuse = new Fuse(places, { keys: ["name"], threshold: 0.2 });
 
   const MAX_SEARCH_RESULTS = 10;
