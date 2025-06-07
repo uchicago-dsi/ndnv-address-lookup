@@ -182,13 +182,13 @@
     popupData.addrToCopy = `${popupData.streetAddress}, ${popupData.city}, ND, ${popupData.zip}`;
 
     if (popupCopyButton !== null) {
-      popupCopyButton.innerHTML = "<a>COPY TO CLIPBOARD</a>";
+      popupCopyButton.innerHTML = '<button type="button">COPY TO CLIPBOARD</button>';
     }
   }
 
   function handleCopy(event) {
     navigator.clipboard.writeText(popupData.addrToCopy);
-    popupCopyButton.innerHTML = "COPIED!";
+    popupCopyButton.innerHTML = "<span>COPIED!</span>";
   }
 
 </script>
@@ -226,7 +226,7 @@
   >
     <Popup>
       <div style="margin-bottom: 10px;">
-        <span class="popupCopyButton" bind:this={popupCopyButton} onclick={handleCopy}><a>COPY TO CLIPBOARD</a></span>
+        <span class="popupCopyButton" bind:this={popupCopyButton} onclick={handleCopy}><button type="button">COPY TO CLIPBOARD</button></span>
       </div>
       <div style="color: black;">
         <strong>Street address:</strong> {popupData?.streetAddress}<br>
@@ -249,9 +249,14 @@
     display: inline-flex;
     justify-content: center;
     width: 100%;
+  }
+  :global(.popupCopyButton button) {
+    border: 1px solid black;
     font-weight: bold;
   }
-  :global(.popupCopyButton a) {
+  :global(.popupCopyButton span) {
+    margin-top: 6px;
+    margin-bottom: 5px;
     font-weight: bold;
   }
 </style>
