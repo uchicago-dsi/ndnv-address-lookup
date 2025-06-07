@@ -154,7 +154,9 @@
   }
 
   let popupData = $state(null);
+  let popupAbsorbFocus = null;
   let popupCopyButton = null;
+  let popupCopiedMessage = null;
 
   function handleClick(event) {
     let p = event.features[0].properties;
@@ -181,14 +183,18 @@
     };
     popupData.addrToCopy = `${popupData.streetAddress}, ${popupData.city}, ND, ${popupData.zip}`;
 
-    if (popupCopyButton !== null) {
-      popupCopyButton.innerHTML = '<button type="button">COPY TO CLIPBOARD</button>';
+    if (popupCopyButton !== null  &&  popupCopiedMessage !== null) {
+      popupCopyButton.style.display = "";
+      popupCopiedMessage.style.display = "none";
     }
   }
 
   function handleCopy(event) {
     navigator.clipboard.writeText(popupData.addrToCopy);
-    popupCopyButton.innerHTML = "<span>COPIED!</span>";
+    if (popupCopyButton !== null  &&  popupCopiedMessage !== null) {
+      popupCopyButton.style.display = "none";
+      popupCopiedMessage.style.display = "";
+    }
   }
 
 </script>
@@ -226,7 +232,15 @@
   >
     <Popup>
       <div style="margin-bottom: 10px;">
-        <span class="popupCopyButton" bind:this={popupCopyButton} onclick={handleCopy}><button type="button">COPY TO CLIPBOARD</button></span>
+        <span class="popupCopyButton">
+          <!-- always hidden, takes the focus so that the copy button doesn't -->
+          <button type="button" bind:this={popupAbsorbFocus} style="display: none;"></button>
+
+          <!-- the "copy" button and "copied" message toggle "display: none;" -->
+          <button type="button" bind:this={popupCopyButton} onclick={handleCopy}>COPY TO CLIPBOARD</button>
+          <span bind:this={popupCopiedMessage} style="display: none;">COPIED!</span>
+
+        </span>
       </div>
       <div style="color: black;">
         <strong>Street address:</strong> {popupData?.streetAddress}<br>
@@ -251,12 +265,16 @@
     width: 100%;
   }
   :global(.popupCopyButton button) {
-    border: 1px solid black;
+    border: 1px solid #808080;
+    background: #f0f0f0;
+    color: black;
     font-weight: bold;
   }
   :global(.popupCopyButton span) {
     margin-top: 6px;
     margin-bottom: 5px;
+    background: white;
+    color: black;
     font-weight: bold;
   }
 </style>
