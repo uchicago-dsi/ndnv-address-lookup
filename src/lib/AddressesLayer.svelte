@@ -1,10 +1,11 @@
 <script>
   import { getMapContext, GeoJSON, CircleLayer, Popup } from 'svelte-maplibre';
 
-  import { getAddressData } from '../utils/getAddressData';
   import sourceList from "../data/source-list.json";
-  import { asyncBufferFromUrl, parquetMetadataAsync, parquetRead } from "hyparquet";
+  import { parquetMetadata, parquetRead } from "hyparquet";
   import { compressors } from "hyparquet-compressors";
+
+  const MIN_ZOOM_FOR_POINTS = 11;
 
   let regions = [];
   let visibleIndexes = [];
@@ -37,8 +38,8 @@
     return new Promise((onComplete) =>
       parquetRead({
         file: parquetFile,
-        //          0      1      2        3        4       5      6       7      8
-        columns: ["lon", "lat", "num", "street", "muni", "msag", "zip", "unit", "src"],
+        //          0        1        2       3       4      5      6      7      8
+        columns: ["num", "street", "unit", "muni", "msag", "zip", "src", "lon", "lat"],
         rowStart: regions[index].start,
         rowEnd: regions[index].stop,
         compressors,
@@ -48,16 +49,16 @@
       type: "Feature",
       geometry: {
         type: "Point",
-        coordinates: [row[0], row[1]],
+        coordinates: [row[7], row[8]],
       },
       properties: {
-        num: row[2],
-        street: row[3],
-        muni: row[4],
-        msag: row[5],
-        zip: row[6],
-        unit: row[7],
-        srcIndex: row[8],
+        num: row[0],
+        street: row[1],
+        unit: row[2],
+        muni: row[3],
+        msag: row[4],
+        zip: row[5],
+        src: row[6],
       },
     })));
   }
@@ -71,7 +72,7 @@
   });
 
   async function handleMove(event) {
-    if (event.target.getZoom() >= 8) {
+    if (event.target.getZoom() >= MIN_ZOOM_FOR_POINTS) {
       const bounds = event.target.getBounds();
       const west = bounds.getWest();
       const east = bounds.getEast();
@@ -110,34 +111,37 @@
         if (loaded) {
           map.getSource("addresses").setData({
             type: "FeatureCollection",
-            features: visibleIndexes.filter(i => i in forEachIndex).map(i => forEachIndex[i]).flat(),
+            features: visibleIndexes.map(i => forEachIndex[i] ?? []).flat(),
           });
         }
       }
     }
   }
 
-  asyncBufferFromUrl({ url }).then(async fileData => {
-    parquetFile = fileData;
+  fetch(url).then(async response => {
+    if (!response.ok) {
+      return;
+    }
+    parquetFile = await response.arrayBuffer();
 
-    parquetMetadataAsync(parquetFile).then(metadata => {
-      let start = 0;
-      for (const rg of metadata.row_groups) {
-        let lonStats = rg.columns.filter(x => x.meta_data.path_in_schema[0] == "lon")[0].meta_data.statistics;
-        let latStats = rg.columns.filter(x => x.meta_data.path_in_schema[0] == "lat")[0].meta_data.statistics;
+    const metadata = parquetMetadata(parquetFile);
 
-        const stop = start + Number(rg.num_rows);
-        regions.push({
-          start: start,
-          stop: stop,
-          west: lonStats.min_value,
-          east: lonStats.max_value,
-          south: latStats.min_value,
-          north: latStats.max_value,
-        });
-        start = stop;
-      }
-    });
+    let start = 0;
+    for (const rg of metadata.row_groups) {
+      let lonStats = rg.columns.filter(x => x.meta_data.path_in_schema[0] == "lon")[0].meta_data.statistics;
+      let latStats = rg.columns.filter(x => x.meta_data.path_in_schema[0] == "lat")[0].meta_data.statistics;
+
+      const stop = start + Number(rg.num_rows);
+      regions.push({
+        start: start,
+        stop: stop,
+        west: lonStats.min_value,
+        east: lonStats.max_value,
+        south: latStats.min_value,
+        north: latStats.max_value,
+      });
+      start = stop;
+    }
 
   });
 
@@ -170,21 +174,21 @@
       cityHeader: isMuni ? "Municipality" : "911 Community (MSAG)",
       city: isMuni ? p.muni : p.msag,
       zip: p.zip,
-      src_title: sourceList[p.srcIndex].title,
-      src_name: sourceList[p.srcIndex].name,
-      src_phone: sourceList[p.srcIndex].phone,
-      src_email: sourceList[p.srcIndex].email
+      src_title: sourceList[p.src].title,
+      src_name: sourceList[p.src].name,
+      src_phone: sourceList[p.src].phone,
+      src_email: sourceList[p.src].email
     };
     popupData.addrToCopy = `${popupData.streetAddress}, ${popupData.city}, ND, ${popupData.zip}`;
 
     if (popupCopyButton !== null) {
-      popupCopyButton.innerHTML = "<a>COPY TO CLIPBOARD</a>";
+      popupCopyButton.innerHTML = '<button type="button">COPY TO CLIPBOARD</button>';
     }
   }
 
   function handleCopy(event) {
     navigator.clipboard.writeText(popupData.addrToCopy);
-    popupCopyButton.innerHTML = "COPIED!";
+    popupCopyButton.innerHTML = "<span>COPIED!</span>";
   }
 
 </script>
@@ -199,7 +203,7 @@
     onmouseenter={mouseEnter}
     onmouseleave={mouseLeave}
     onclick={handleClick}
-    minzoom={8}
+    minzoom={MIN_ZOOM_FOR_POINTS}
     paint={{
         "circle-color": "cyan",
         "circle-stroke-width": [
@@ -207,7 +211,7 @@
         ],
         "circle-stroke-color": "black",
         "circle-radius": [
-          "interpolate", ["linear"], ["zoom"], 8, 0, 13, 3, 17, 8
+          "interpolate", ["linear"], ["zoom"], MIN_ZOOM_FOR_POINTS, 0, 13, 3, 17, 8
         ],
         "circle-stroke-opacity": {
           "base": 1,
@@ -215,14 +219,14 @@
         },
         "circle-opacity": {
           "base": 1,
-          "stops": [[8, 0], [10, 1], [20, 1]]
+          "stops": [[MIN_ZOOM_FOR_POINTS, 0], [MIN_ZOOM_FOR_POINTS + 1, 1], [20, 1]]
         }
       }}
     beforeLayerType="symbol"
   >
     <Popup>
       <div style="margin-bottom: 10px;">
-        <span class="popupCopyButton" bind:this={popupCopyButton} onclick={handleCopy}><a>COPY TO CLIPBOARD</a></span>
+        <span class="popupCopyButton" bind:this={popupCopyButton} onclick={handleCopy}><button type="button">COPY TO CLIPBOARD</button></span>
       </div>
       <div style="color: black;">
         <strong>Street address:</strong> {popupData?.streetAddress}<br>
@@ -245,9 +249,14 @@
     display: inline-flex;
     justify-content: center;
     width: 100%;
+  }
+  :global(.popupCopyButton button) {
+    border: 1px solid black;
     font-weight: bold;
   }
-  :global(.popupCopyButton a) {
+  :global(.popupCopyButton span) {
+    margin-top: 6px;
+    margin-bottom: 5px;
     font-weight: bold;
   }
 </style>
