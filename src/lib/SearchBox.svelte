@@ -76,7 +76,7 @@
       {/each}
     </List>
     {:else if sayNoResultsFound}
-        <Item><Text>(no results found)</Text></Item>
+        <Item><Text style="color: #808080;">(no results found)</Text></Item>
     {/if}
   </Menu>
 </div>
