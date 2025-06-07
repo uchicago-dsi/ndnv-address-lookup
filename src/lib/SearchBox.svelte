@@ -30,8 +30,8 @@
       const myresults = fuse.search(query, { limit: 1 });
       if (myresults.length != 0) {
         query = myresults[0].item.name;
-        results = [];
         onSelect(myresults[0].item);
+        resultsList.getElement().style.display = "none";
       }
       else {
         sayNoResultsFound = true;
@@ -52,7 +52,7 @@
   onMount(() => {
     document.body.addEventListener("click", (event) => {
       if (results.length != 0  &&  searchBox !== null  &&  !searchBox.contains(event.target)) {
-        results = [];
+        resultsList.getElement().style.display = "none";
       }
       sayNoResultsFound = false;
     });
