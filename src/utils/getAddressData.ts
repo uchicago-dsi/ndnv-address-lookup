@@ -1,29 +1,36 @@
-import { asyncBufferFromUrl, parquetReadObjects } from "hyparquet";
+import { asyncBufferFromUrl, parquetRead } from "hyparquet";
 import { compressors } from "hyparquet-compressors";
 
 export const getAddressData = async (
   url = new URL("/911-addresses.parquet", import.meta.url).href
 ) => {
   const file = await asyncBufferFromUrl({ url });
-  const addresses = await parquetReadObjects({ file, compressors });
-  const addressesGeoJSON = {
-    type: "FeatureCollection",
-    features: addresses.map((addr) => ({
-      type: "Feature",
-      geometry: {
-        type: "Point",
-        coordinates: [addr.lon, addr.lat],
-      },
-      properties: {
-        num: addr.num,
-        street: addr.street,
-        unit: addr.unit,
-        muni: addr.muni,
-        msag: addr.msag,
-        zip: addr.zip,
-        srcIndex: addr.src,
-      },
-    })),
-  };
-  return addressesGeoJSON;
+  // const addresses = await parquetReadObjects({ file, compressors });
+
+  let output;
+  parquetRead({ file, compressors }).onComplete(data => {
+    output = data;
+  });
+
+
+  // const addressesGeoJSON = {
+  //   type: "FeatureCollection",
+  //   features: addresses.map((addr) => ({
+  //     type: "Feature",
+  //     geometry: {
+  //       type: "Point",
+  //       coordinates: [addr.lon, addr.lat],
+  //     },
+  //     properties: {
+  //       num: addr.num,
+  //       street: addr.street,
+  //       unit: addr.unit,
+  //       muni: addr.muni,
+  //       msag: addr.msag,
+  //       zip: addr.zip,
+  //       srcIndex: addr.src,
+  //     },
+  //   })),
+  // };
+  // return addressesGeoJSON;
 };

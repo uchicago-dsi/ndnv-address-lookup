@@ -6,6 +6,14 @@
   "metadata": {},
 
   "sources": {
+    "google_satellite": {
+      "type": "raster",
+      "tiles": [
+        "https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}"
+      ],
+      "tileSize": 256,
+      "attribution": "<a href='https://maps.google.com/'>Google</a>"
+    },
     "usgs": {
       "type": "raster",
       "tiles": [
@@ -26,59 +34,21 @@
       }
     },
     {
+      "id": "usgs",
+      "type": "raster",
+      "source": "google_satellite",
+      "maxzoom": 24,
+      "layout": {
+        "visibility": "visible"
+      }
+    },
+    {
       "id": "states",
       "type": "line",
       "source": "states",
       "paint": {
-        "line-color": "hsl(122, 100%, 56%)",
+        "line-color": "hsl(122, 100%, 35%)",
         "line-width": 2
-      }
-    },
-    {
-      "id": "railway",
-      "type": "line",
-      "source": "railways",
-      "minzoom": 14,
-      "paint": {
-        "line-color": "#bbb",
-        "line-width": {
-          "base": 1.4,
-          "stops": [[14, 0.4], [15, 0.75], [20, 2]]
-        }
-      }
-    },
-    {
-      "id": "railway-hatching",
-      "type": "line",
-      "source": "railways",
-      "minzoom": 14,
-      "paint": {
-        "line-color": "#bbb",
-        "line-dasharray": [0.2, 8],
-        "line-width": {
-          "base": 1.4,
-          "stops": [[14, 1], [15, 6], [20, 16]]
-        }
-      }
-    },
-    {
-      "id": "railway-name",
-      "type": "symbol",
-      "source": "railways",
-      "filter": ["!=", "name", ""],
-      "minzoom": 14,
-      "layout": {
-        "text-size": 13,
-        "text-font": ["Noto Sans Regular"],
-        "text-field": "{name}",
-        "symbol-placement": "line",
-        "text-rotation-alignment": "map"
-      },
-      "paint": {
-        "text-color": "black",
-        "text-halo-color": "white",
-        "text-halo-blur": 0.5,
-        "text-halo-width": 2
       }
     },
     {
@@ -86,7 +56,7 @@
       "type": "line",
       "source": "counties",
       "paint": {
-        "line-color": "hsl(122, 100%, 56%)",
+        "line-color": "hsl(122, 100%, 35%)",
         "line-width": 2
       }
     },
@@ -95,130 +65,9 @@
       "type": "line",
       "source": "reservations",
       "paint": {
-        "line-color": "hsl(60, 100%, 50%)",
+        "line-color": "hsl(60, 100%, 40%)",
         "line-width": 2
       }
-    },
-    {
-      "id": "counties-names",
-      "type": "symbol",
-      "source": "counties",
-      "maxzoom": 9,
-      "layout": {
-        "text-font": ["Noto Sans Regular"],
-        "text-size": {
-          "base": 1.2,
-          "stops": [[7, 14], [11, 24]]
-        },
-        "text-field": "{name}",
-        "text-max-width": 8,
-        "visibility": "visible"
-      },
-      "paint": {
-        "text-color": "hsl(122, 100%, 56%)"
-      }
-    },
-    {
-      "id": "reservation-names",
-      "type": "symbol",
-      "source": "reservations",
-      "maxzoom": 9,
-      "layout": {
-        "text-font": ["Noto Sans Regular"],
-        "text-size": {
-          "base": 1.2,
-          "stops": [[7, 14], [11, 24]]
-        },
-        "text-field": "{name}",
-        "text-max-width": 8,
-        "visibility": "visible"
-      },
-      "paint": {
-        "text-color": "hsl(60, 100%, 50%)"
-      }
-    },
-    {
-      "id": "place-village",
-      "type": "symbol",
-      "source": "places",
-      "minzoom": 11,
-      "filter": ["!in", "fclass", "city", "town"],
-      "layout": {
-        "text-font": ["Noto Sans Regular"],
-        "text-size": {
-          "base": 1.2,
-          "stops": [[10, 12], [15, 16]]
-        },
-        "text-field": "{name}",
-        "text-max-width": 8
-      },
-      "paint": {
-        "text-color": "rgba(255, 255, 255, 1)",
-        "text-halo-width": 1.2,
-        "text-halo-color": "rgba(10, 9, 9, 0.8)"
-      }
-    },
-    {
-      "id": "place-town",
-      "type": "symbol",
-      "source": "places",
-      "filter": ["all", ["in", "fclass", "city", "town"], ["!=", "name", "Bismarck"]],
-      "layout": {
-        "text-font": ["Noto Sans Regular"],
-        "text-size": {
-          "base": 1.2,
-          "stops": [[10, 14], [15, 24]]
-        },
-        "text-field": "{name}",
-        "text-max-width": 8
-      },
-      "paint": {
-        "text-color": "rgba(255, 255, 255, 1)",
-        "text-halo-width": 1.2,
-        "text-halo-color": "rgba(22, 22, 22, 0.8)"
-      }
-    },
-    {
-      "id": "place-city-capital",
-      "type": "symbol",
-      "source": "places",
-      "filter": ["==", "name", "Bismarck"],
-      "layout": {
-        "text-font": ["Noto Sans Regular"],
-        "text-size": {
-          "base": 1.2,
-          "stops": [[10, 14], [15, 24]]
-        },
-        "text-field": "{name}",
-        "text-transform": "uppercase",
-        "text-max-width": 8
-      },
-      "paint": {
-        "text-color": "rgba(255, 255, 255, 1)",
-        "text-halo-width": 1.2,
-        "text-halo-color": "rgba(22, 22, 22, 0.8)"
-      }
-    },
-    {
-      "id": "poi-level-1",
-      "type": "symbol",
-      "source": "poi",
-      "minzoom": 16,
-      "layout": {
-        "text-padding": 2,
-        "text-font": ["Noto Sans Regular"],
-        "text-anchor": "center",
-        "text-field": "{name}",
-        "text-size": 11,
-        "text-max-width": 9
-      },
-      "paint": {
-        "text-color": "black",
-        "text-halo-color": "white",
-        "text-halo-blur": 0.5,
-        "text-halo-width": 2
-      }
-     }
-
+    }
   ]
 }

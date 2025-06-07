@@ -3,19 +3,142 @@
 
   import { getAddressData } from '../utils/getAddressData';
   import sourceList from "../data/source-list.json";
+  import { asyncBufferFromUrl, parquetMetadataAsync, parquetRead } from "hyparquet";
+  import { compressors } from "hyparquet-compressors";
+
+  let regions = [];
+  let visibleIndexes = [];
+  let forEachIndex = {};
+  let parquetFile = null;
+  const url = new URL("/911-addresses.parquet", import.meta.url).href;
+
+  function hasNewIndexes(newVisibleIndexes) {
+    if (newVisibleIndexes.length > visibleIndexes.length) {
+      return true;
+    }
+    let oldi = 0;
+    let newi = 0;
+    while (oldi < visibleIndexes.length  &&  newi < newVisibleIndexes.length) {
+      if (visibleIndexes[oldi] < newVisibleIndexes[newi]) {
+        oldi += 1;
+      }
+      else if (visibleIndexes[oldi] == newVisibleIndexes[newi]) {
+        oldi += 1;
+        newi += 1;
+      }
+      else {
+        return true;
+      }
+    }
+    return newi < newVisibleIndexes.length;
+  }
+
+  async function readFromParquet(index) {
+    return new Promise((onComplete) =>
+      parquetRead({
+        file: parquetFile,
+        //          0      1      2        3        4       5      6       7      8
+        columns: ["lon", "lat", "num", "street", "muni", "msag", "zip", "unit", "src"],
+        rowStart: regions[index].start,
+        rowEnd: regions[index].stop,
+        compressors,
+        onComplete,
+      })
+    ).then(data => data.map(row => ({
+      type: "Feature",
+      geometry: {
+        type: "Point",
+        coordinates: [row[0], row[1]],
+      },
+      properties: {
+        num: row[2],
+        street: row[3],
+        muni: row[4],
+        msag: row[5],
+        zip: row[6],
+        unit: row[7],
+        srcIndex: row[8],
+      },
+    })));
+  }
 
   const { map, loaded } = $derived(getMapContext());
   $effect(() => {
-    // only load data and fill if the map is loaded and addresses is empty
     if (loaded) {
-      map.getSource("addresses")?.getData().then((data) => {
-        if (data.features.length == 0) {
-          getAddressData().then((data) => {
-            map.getSource("addresses")?.setData(data);
+      map.on("zoom", handleMove);
+      map.on("move", handleMove);
+    }
+  });
+
+  async function handleMove(event) {
+    if (event.target.getZoom() >= 8) {
+      const bounds = event.target.getBounds();
+      const west = bounds.getWest();
+      const east = bounds.getEast();
+      const south = bounds.getSouth();
+      const north = bounds.getNorth();
+
+      let newVisibleIndexes = [];
+      for (let i = 0;  i < regions.length;  i++) {
+        const r = regions[i];
+        if (r.east >= west  &&  r.west <= east  &&  r.north >= south  &&  r.south <= north) {
+          newVisibleIndexes.push(i);
+        }
+      }
+
+      if (hasNewIndexes(newVisibleIndexes)  &&  parquetFile !== null) {
+        visibleIndexes = newVisibleIndexes;
+
+        let promises = {};
+        for (const index of visibleIndexes) {
+          if (!(index in forEachIndex)) {
+            promises[index] = readFromParquet(index);
+          }
+        }
+
+        let newForEachIndex = {};
+        for (const index of visibleIndexes) {
+          if (index in forEachIndex) {
+            newForEachIndex[index] = forEachIndex[index];
+          }
+          else {
+            newForEachIndex[index] = await promises[index];
+          }
+        }
+        forEachIndex = newForEachIndex;
+
+        if (loaded) {
+          map.getSource("addresses").setData({
+            type: "FeatureCollection",
+            features: visibleIndexes.filter(i => i in forEachIndex).map(i => forEachIndex[i]).flat(),
           });
         }
-      });
+      }
     }
+  }
+
+  asyncBufferFromUrl({ url }).then(async fileData => {
+    parquetFile = fileData;
+
+    parquetMetadataAsync(parquetFile).then(metadata => {
+      let start = 0;
+      for (const rg of metadata.row_groups) {
+        let lonStats = rg.columns.filter(x => x.meta_data.path_in_schema[0] == "lon")[0].meta_data.statistics;
+        let latStats = rg.columns.filter(x => x.meta_data.path_in_schema[0] == "lat")[0].meta_data.statistics;
+
+        const stop = start + Number(rg.num_rows);
+        regions.push({
+          start: start,
+          stop: stop,
+          west: lonStats.min_value,
+          east: lonStats.max_value,
+          south: latStats.min_value,
+          north: latStats.max_value,
+        });
+        start = stop;
+      }
+    });
+
   });
 
   function mouseEnter(event) {
@@ -76,6 +199,7 @@
     onmouseenter={mouseEnter}
     onmouseleave={mouseLeave}
     onclick={handleClick}
+    minzoom={8}
     paint={{
         "circle-color": "cyan",
         "circle-stroke-width": [
