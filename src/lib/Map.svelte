@@ -14,10 +14,6 @@
     type: "geojson",
     data: `${window.location.origin}/counties.geojson`
   };
-  mapStyle.sources.states = {
-    type: "geojson",
-    data: `${window.location.origin}/states.geojson`
-  };
 
   let theMap;
   function handleOnLoad(map) {
@@ -29,6 +25,11 @@
       theMap.flyTo({ center: item.coords, zoom: item.zoom });
     }
   }
+
+  const MAP_BOUNDS = [-104.5181265794389, 45.63232713888373, -96.06887947161051, 49.2702273475217];
+  const DX = 0.5 * (MAP_BOUNDS[2] - MAP_BOUNDS[0]);
+  const DY = 0.5 * (MAP_BOUNDS[3] - MAP_BOUNDS[1]);
+  const MAP_MAX_BOUNDS = [MAP_BOUNDS[0] - DX, MAP_BOUNDS[1] - DY, MAP_BOUNDS[2] + DX, MAP_BOUNDS[3] + DY]
 </script>
 
 <MapLibre 
@@ -37,7 +38,8 @@
   standardControls
   pitchWithRotate={false}
   dragRotate={false}
-  bounds={[-104.5181265794389, 45.63232713888373, -96.06887947161051, 49.2702273475217]}
+  bounds={MAP_BOUNDS}
+  maxBounds={MAP_MAX_BOUNDS}
   onload={handleOnLoad}
   >
   <AddressLayer />

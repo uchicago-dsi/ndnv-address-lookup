@@ -34,15 +34,6 @@
       }
     },
     {
-      "id": "states",
-      "type": "line",
-      "source": "states",
-      "paint": {
-        "line-color": "hsl(122, 100%, 35%)",
-        "line-width": 2
-      }
-    },
-    {
       "id": "counties",
       "type": "line",
       "source": "counties",
