@@ -189,11 +189,17 @@
     }
   }
 
+  const REVERT_COPY_BUTTON_TIMEOUT = 10000;
+
   function handleCopy(event) {
     navigator.clipboard.writeText(popupData.addrToCopy);
     if (popupCopyButton !== null  &&  popupCopiedMessage !== null) {
       popupCopyButton.style.display = "none";
       popupCopiedMessage.style.display = "";
+      setTimeout(() => {
+        popupCopyButton.style.display = "";
+        popupCopiedMessage.style.display = "none";
+      }, REVERT_COPY_BUTTON_TIMEOUT);
     }
   }
 
@@ -237,8 +243,8 @@
           <button type="button" bind:this={popupAbsorbFocus} style="display: none;"></button>
 
           <!-- the "copy" button and "copied" message toggle "display: none;" -->
-          <button type="button" bind:this={popupCopyButton} onclick={handleCopy}>COPY TO CLIPBOARD</button>
-          <span bind:this={popupCopiedMessage} style="display: none;">COPIED!</span>
+          <button type="button" bind:this={popupCopyButton} onclick={handleCopy}>Copy to Clipboard</button>
+          <span bind:this={popupCopiedMessage} style="display: none;">Copied!</span>
 
         </span>
       </div>
