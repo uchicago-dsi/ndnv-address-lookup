@@ -6,6 +6,8 @@
   import mapStyle from '../data/map-style.json';
 
   // URL references in the map style JSON must be absolute
+  mapStyle.sprite = `${window.location.origin}/sprites`;
+  mapStyle.glyphs = `${window.location.origin}/fonts/{fontstack}/{range}.pbf`;
   mapStyle.sources.reservations = {
     type: "geojson",
     data: `${window.location.origin}/reservations.geojson`
