@@ -307,6 +307,87 @@
       "paint": {
         "text-color": "black"
       }
+    },
+
+    {
+      "id": "place-11.9",
+      "type": "symbol",
+      "source": "places",
+      "filter": [">=", "minzoom", 11.9],
+      "minzoom": 11.9,
+      "layout": {
+        "text-font": ["Noto Sans Regular"],
+        "text-size": {
+          "stops": [[7, 15], [11, 24]]
+        },
+        "text-field": "{name}",
+        "text-max-width": 8
+      },
+      "paint": {
+        "text-color": "white",
+        "text-halo-width": 1.2,
+        "text-halo-color": "black"
+      }
+    },
+    {
+      "id": "place-8",
+      "type": "symbol",
+      "source": "places",
+      "filter": ["all", [">=", "minzoom", 8], ["<", "minzoom", 11.9]],
+      "minzoom": 8,
+      "layout": {
+        "text-font": ["Noto Sans Regular"],
+        "text-size": {
+          "stops": [[7, 15], [11, 24]]
+        },
+        "text-field": "{name}",
+        "text-max-width": 8
+      },
+      "paint": {
+        "text-color": "white",
+        "text-halo-width": 1.2,
+        "text-halo-color": "black"
+      }
+    },
+    {
+      "id": "place-7",
+      "type": "symbol",
+      "source": "places",
+      "filter": ["all", [">=", "minzoom", 7], ["<", "minzoom", 8]],
+      "minzoom": 7,
+      "layout": {
+        "text-font": ["Noto Sans Regular"],
+        "text-size": {
+          "stops": [[7, 15], [11, 24]]
+        },
+        "text-field": "{name}",
+        "text-max-width": 8
+      },
+      "paint": {
+        "text-color": "white",
+        "text-halo-width": 1.2,
+        "text-halo-color": "black"
+      }
+    },
+    {
+      "id": "place-5",
+      "type": "symbol",
+      "source": "places",
+      "filter": ["<", "minzoom", 7],
+      "minzoom": 5,
+      "layout": {
+        "text-font": ["Noto Sans Regular"],
+        "text-size": {
+          "stops": [[5, 15], [11, 24]]
+        },
+        "text-field": "{name}",
+        "text-max-width": 8
+      },
+      "paint": {
+        "text-color": "white",
+        "text-halo-width": 1.2,
+        "text-halo-color": "black"
+      }
     }
 
   ]

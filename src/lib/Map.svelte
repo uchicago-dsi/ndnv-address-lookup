@@ -21,6 +21,10 @@
     type: "geojson",
     data: `${window.location.origin}/osm-big-roads.geojson`
   };
+  mapStyle.sources["places"] = {
+    type: "geojson",
+    data: `${window.location.origin}/places.geojson`
+  };
 
   let theMap;
   function handleOnLoad(map) {
