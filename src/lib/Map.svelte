@@ -2,6 +2,7 @@
   import { MapLibre } from 'svelte-maplibre';
   import 'maplibre-gl/dist/maplibre-gl.css';
 
+  import SmallRoadLayer from './SmallRoadLayer.svelte';
   import AddressLayer from './AddressesLayer.svelte';
   import mapStyle from '../data/map-style.json';
 
@@ -15,6 +16,10 @@
   mapStyle.sources.counties = {
     type: "geojson",
     data: `${window.location.origin}/counties.geojson`
+  };
+  mapStyle.sources["big-roads"] = {
+    type: "geojson",
+    data: `${window.location.origin}/osm-big-roads.geojson`
   };
 
   let theMap;
@@ -44,6 +49,7 @@
   maxBounds={MAP_MAX_BOUNDS}
   onload={handleOnLoad}
   >
+  <SmallRoadLayer />
   <AddressLayer />
 </MapLibre>
 

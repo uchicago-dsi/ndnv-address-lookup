@@ -45,22 +45,24 @@
         compressors,
         onComplete,
       })
-    ).then(data => data.map(row => ({
-      type: "Feature",
-      geometry: {
-        type: "Point",
-        coordinates: [row[7], row[8]],
-      },
-      properties: {
-        num: row[0],
-        street: row[1],
-        unit: row[2],
-        muni: row[3],
-        msag: row[4],
-        zip: row[5],
-        src: row[6],
-      },
-    })));
+    ).then(data => {
+      forEachIndex[index.toString()] = data.map(row => ({
+        type: "Feature",
+        geometry: {
+          type: "Point",
+          coordinates: [row[7], row[8]],
+        },
+        properties: {
+          num: row[0],
+          street: row[1],
+          unit: row[2],
+          muni: row[3],
+          msag: row[4],
+          zip: row[5],
+          src: row[6],
+        },
+      }));
+    });
   }
 
   const { map, loaded } = $derived(getMapContext());
@@ -70,6 +72,15 @@
       map.on("move", handleMove);
     }
   });
+
+  function reloadSource() {
+    if (loaded) {
+      map.getSource("addresses").setData({
+        type: "FeatureCollection",
+        features: visibleIndexes.map(i => forEachIndex[i] ?? []).flat(),
+      });
+    }
+  }
 
   async function handleMove(event) {
     if (event.target.getZoom() >= MIN_ZOOM_FOR_POINTS) {
@@ -90,30 +101,19 @@
       if (hasNewIndexes(newVisibleIndexes)  &&  parquetFile !== null) {
         visibleIndexes = newVisibleIndexes;
 
-        let promises = {};
-        for (const index of visibleIndexes) {
-          if (!(index in forEachIndex)) {
-            promises[index] = readFromParquet(index);
+        for (const index in forEachIndex) {
+          if (!(Number(index) in visibleIndexes)) {
+            delete forEachIndex[index];
           }
         }
 
-        let newForEachIndex = {};
+        let promises = [];
         for (const index of visibleIndexes) {
-          if (index in forEachIndex) {
-            newForEachIndex[index] = forEachIndex[index];
-          }
-          else {
-            newForEachIndex[index] = await promises[index];
+          if (!(index.toString() in forEachIndex)) {
+            promises.push(readFromParquet(index));
           }
         }
-        forEachIndex = newForEachIndex;
-
-        if (loaded) {
-          map.getSource("addresses").setData({
-            type: "FeatureCollection",
-            features: visibleIndexes.map(i => forEachIndex[i] ?? []).flat(),
-          });
-        }
+        Promise.all(promises).then(reloadSource).catch(reloadSource);
       }
     }
   }
@@ -142,7 +142,6 @@
       });
       start = stop;
     }
-
   });
 
   function mouseEnter(event) {
