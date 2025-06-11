@@ -217,7 +217,7 @@
     onclick={handleClick}
     minzoom={MIN_ZOOM_FOR_POINTS}
     paint={{
-        "circle-color": "cyan",
+        "circle-color": "#5ef2de",
         "circle-stroke-width": [
           "interpolate", ["linear"], ["zoom"], 11, 0, 13, 0.5, 17, 2
         ],
