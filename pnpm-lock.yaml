@@ -8,6 +8,12 @@ importers:
 
   .:
     dependencies:
+      '@smui/button':
+        specifier: ^8.0.0-beta.3
+        version: 8.0.0-beta.3
+      '@smui/dialog':
+        specifier: ^8.0.0-beta.3
+        version: 8.0.0-beta.3
       '@smui/list':
         specifier: ^8.0.0-beta.3
         version: 8.0.0-beta.3
@@ -260,8 +266,14 @@ packages:
   '@material/base@14.0.0':
     resolution: {integrity: sha512-Ou7vS7n1H4Y10MUZyYAbt6H0t67c6urxoCgeVT7M38aQlaNUwFMODp7KT/myjYz2YULfhu3PtfSV3Sltgac9mA==}
 
+  '@material/button@14.0.0':
+    resolution: {integrity: sha512-dqqHaJq0peyXBZupFzCjmvScrfljyVU66ZCS3oldsaaj5iz8sn33I/45Z4zPzdR5F5z8ExToHkRcXhakj1UEAA==}
+
   '@material/density@14.0.0':
     resolution: {integrity: sha512-NlxXBV5XjNsKd8UXF4K/+fOXLxoFNecKbsaQO6O2u+iG8QBfFreKRmkhEBb2hPPwC3w8nrODwXX0lHV+toICQw==}
+
+  '@material/dialog@14.0.0':
+    resolution: {integrity: sha512-E07NEE4jP8jHaw/y2Il2R1a3f4wDFh2sgfCBtRO/Xh0xxJUMuQ7YXo/F3SAA8jfMbbkUv/PHdJUM3I3HmI9mAA==}
 
   '@material/dom@14.0.0':
     resolution: {integrity: sha512-8t88XyacclTj8qsIw9q0vEj4PI2KVncLoIsIMzwuMx49P2FZg6TsLjor262MI3Qs00UWAifuLMrhnOnfyrbe7Q==}
@@ -274,6 +286,12 @@ packages:
 
   '@material/floating-label@14.0.0':
     resolution: {integrity: sha512-Aq8BboP1sbNnOtsV72AfaYirHyOrQ/GKFoLrZ1Jt+ZGIAuXPETcj9z7nQDznst0ZeKcz420PxNn9tsybTbeL/Q==}
+
+  '@material/focus-ring@14.0.0':
+    resolution: {integrity: sha512-fqqka6iSfQGJG3Le48RxPCtnOiaLGPDPikhktGbxlyW9srBVMgeCiONfHM7IT/1eu80O0Y67Lh/4ohu5+C+VAQ==}
+
+  '@material/icon-button@14.0.0':
+    resolution: {integrity: sha512-wHMqzm7Q/UwbWLoWv32Li1r2iVYxadIrwTNxT0+p+7NdfI3lEwMN3NoB0CvoJnHTljjXDzce0KJ3nZloa0P0gA==}
 
   '@material/line-ripple@14.0.0':
     resolution: {integrity: sha512-Rx9eSnfp3FcsNz4O+fobNNq2PSm5tYHC3hRpY2ZK3ghTvgp3Y40/soaGEi/Vdg0F7jJXRaBSNOe6p5t9CVfy8Q==}
@@ -307,6 +325,9 @@ packages:
 
   '@material/tokens@14.0.0':
     resolution: {integrity: sha512-SXgB9VwsKW4DFkHmJfDIS0x0cGdMWC1D06m6z/WQQ5P5j6/m0pKrbHVlrLzXcRjau+mFhXGvj/KyPo9Pp/Rc8Q==}
+
+  '@material/touch-target@14.0.0':
+    resolution: {integrity: sha512-o3kvxmS4HkmZoQTvtzLJrqSG+ezYXkyINm3Uiwio1PTg67pDgK5FRwInkz0VNaWPcw9+5jqjUQGjuZMtjQMq8w==}
 
   '@material/typography@14.0.0':
     resolution: {integrity: sha512-/QtHBYiTR+TPMryM/CT386B2WlAQf/Ae32V324Z7P40gHLKY/YBXx7FDutAWZFeOerq/two4Nd2aAHBcMM2wMw==}
@@ -411,8 +432,14 @@ packages:
     cpu: [x64]
     os: [win32]
 
+  '@smui/button@8.0.0-beta.3':
+    resolution: {integrity: sha512-1jzK3wznd18kQxOyyrzGEijtcUcvuRcLhTaQwrYk6E7McjTD6O8gvLMTUCwLnQO4r3x9DHuUpBHnPxB4kBcg5w==}
+
   '@smui/common@8.0.0-beta.3':
     resolution: {integrity: sha512-j4XE0cGn1O4PgfAFyemNE6KQicnjOUnSb+gWD52GJntatBEhszz1GdaKUTIF4oxM/V7RW5nSX2xzrilPytLEwg==}
+
+  '@smui/dialog@8.0.0-beta.3':
+    resolution: {integrity: sha512-bsOviW/jsSQwhBHOMjz+5iEpsaI2HZ6Baszp5Z1bVhgh+waVWcIZRTXV0TGLJEcQpian759Z7GaOkiaLFYsc6A==}
 
   '@smui/floating-label@8.0.0-beta.3':
     resolution: {integrity: sha512-lZmvDahjla7JDKspF9tBUq2sFpeaK5R22f2WCQGOmAV39ygV68ZZg7jKcwqDJJlLLflZXDmISmS/O2GTZQRyvg==}
@@ -944,8 +971,42 @@ snapshots:
     dependencies:
       tslib: 2.8.1
 
+  '@material/button@14.0.0':
+    dependencies:
+      '@material/density': 14.0.0
+      '@material/dom': 14.0.0
+      '@material/elevation': 14.0.0
+      '@material/feature-targeting': 14.0.0
+      '@material/focus-ring': 14.0.0
+      '@material/ripple': 14.0.0
+      '@material/rtl': 14.0.0
+      '@material/shape': 14.0.0
+      '@material/theme': 14.0.0
+      '@material/tokens': 14.0.0
+      '@material/touch-target': 14.0.0
+      '@material/typography': 14.0.0
+      tslib: 2.8.1
+
   '@material/density@14.0.0':
     dependencies:
+      tslib: 2.8.1
+
+  '@material/dialog@14.0.0':
+    dependencies:
+      '@material/animation': 14.0.0
+      '@material/base': 14.0.0
+      '@material/button': 14.0.0
+      '@material/dom': 14.0.0
+      '@material/elevation': 14.0.0
+      '@material/feature-targeting': 14.0.0
+      '@material/icon-button': 14.0.0
+      '@material/ripple': 14.0.0
+      '@material/rtl': 14.0.0
+      '@material/shape': 14.0.0
+      '@material/theme': 14.0.0
+      '@material/tokens': 14.0.0
+      '@material/touch-target': 14.0.0
+      '@material/typography': 14.0.0
       tslib: 2.8.1
 
   '@material/dom@14.0.0':
@@ -975,6 +1036,26 @@ snapshots:
       '@material/rtl': 14.0.0
       '@material/theme': 14.0.0
       '@material/typography': 14.0.0
+      tslib: 2.8.1
+
+  '@material/focus-ring@14.0.0':
+    dependencies:
+      '@material/dom': 14.0.0
+      '@material/feature-targeting': 14.0.0
+      '@material/rtl': 14.0.0
+
+  '@material/icon-button@14.0.0':
+    dependencies:
+      '@material/base': 14.0.0
+      '@material/density': 14.0.0
+      '@material/dom': 14.0.0
+      '@material/elevation': 14.0.0
+      '@material/feature-targeting': 14.0.0
+      '@material/focus-ring': 14.0.0
+      '@material/ripple': 14.0.0
+      '@material/rtl': 14.0.0
+      '@material/theme': 14.0.0
+      '@material/touch-target': 14.0.0
       tslib: 2.8.1
 
   '@material/line-ripple@14.0.0':
@@ -1081,6 +1162,13 @@ snapshots:
     dependencies:
       '@material/elevation': 14.0.0
 
+  '@material/touch-target@14.0.0':
+    dependencies:
+      '@material/base': 14.0.0
+      '@material/feature-targeting': 14.0.0
+      '@material/rtl': 14.0.0
+      tslib: 2.8.1
+
   '@material/typography@14.0.0':
     dependencies:
       '@material/feature-targeting': 14.0.0
@@ -1147,9 +1235,27 @@ snapshots:
   '@rollup/rollup-win32-x64-msvc@4.40.2':
     optional: true
 
+  '@smui/button@8.0.0-beta.3':
+    dependencies:
+      '@material/button': 14.0.0
+      '@material/elevation': 14.0.0
+      '@material/feature-targeting': 14.0.0
+      '@material/ripple': 14.0.0
+      '@material/shape': 14.0.0
+      '@material/theme': 14.0.0
+      '@smui/common': 8.0.0-beta.3
+      '@smui/ripple': 8.0.0-beta.3
+
   '@smui/common@8.0.0-beta.3':
     dependencies:
       '@material/dom': 14.0.0
+
+  '@smui/dialog@8.0.0-beta.3':
+    dependencies:
+      '@material/button': 14.0.0
+      '@material/dialog': 14.0.0
+      '@material/dom': 14.0.0
+      '@smui/common': 8.0.0-beta.3
 
   '@smui/floating-label@8.0.0-beta.3':
     dependencies:
