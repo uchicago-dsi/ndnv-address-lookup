@@ -162,6 +162,7 @@
     let isMuni = p.muni != "Unincorporated"  &&  p.muni != "Undefined";
     let unit = p.unit == "" ? "" : ` (${p.unit})`;
     popupData = {
+      streetAddressHeader: p.unit == "" ? "Street address" : "Street address (and unit)",
       streetAddress: (p.num >= 0 ? p.num.toString() + " " : "") + p.street + unit,
       cityHeader: isMuni ? "Municipality" : "911 Community (MSAG)",
       city: isMuni ? p.muni : p.msag,
@@ -240,7 +241,7 @@
         </span>
       </div>
       <div style="color: black;">
-        <strong>Street address:</strong> {popupData?.streetAddress}<br>
+        <strong>{popupData?.streetAddressHeader}:</strong> {popupData?.streetAddress}<br>
         <strong>{popupData?.cityHeader}:</strong> {popupData?.city}<br>
         <strong>Zip code:</strong> {popupData?.zip}<br><br>
           <details>
