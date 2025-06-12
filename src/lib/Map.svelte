@@ -27,9 +27,17 @@
     data: `${window.location.origin}/places.geojson`
   };
 
+  const hashLocation = window.location.hash;
+
   let theMap;
   function handleOnLoad(map) {
     theMap = map;
+
+    if (hashLocation) {
+      const [z, y, x] = hashLocation.substring(1).split("/");
+      theMap.setZoom(z);
+      theMap.setCenter([x, y]);
+    }
   }
 
   export function flyTo(item) {
@@ -53,6 +61,7 @@
   bounds={MAP_BOUNDS}
   maxBounds={MAP_MAX_BOUNDS}
   onload={handleOnLoad}
+  hash={true}
   >
   <SmallRoadLayer />
   <AddressLayer />
