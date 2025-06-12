@@ -160,16 +160,7 @@
   function handleClick(event) {
     let p = event.features[0].properties;
     let isMuni = p.muni != "Unincorporated"  &&  p.muni != "Undefined";
-    let unit;
-    if (p.unit == "") {
-      unit = "";
-    }
-    else if (p.unit.startsWith("APT ")) {
-      unit = `, Apt ${p.unit.substring(4)}`;
-    }
-    else {
-      unit = `, Unit ${p.unit}`;
-    }
+    let unit = p.unit == "" ? "" : ` (${p.unit})`;
     popupData = {
       streetAddress: (p.num >= 0 ? p.num.toString() + " " : "") + p.street + unit,
       cityHeader: isMuni ? "Municipality" : "911 Community (MSAG)",
