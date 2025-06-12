@@ -13,14 +13,6 @@
       ],
       "tileSize": 256,
       "attribution": "<a target='_blank' href='https://maps.google.com/'>Google Maps</a>"
-    },
-    "openmaptiles": {
-      "type": "vector",
-      "tiles": [
-        "https://d17gef4m69t9r4.cloudfront.net/planet/{z}/{x}/{y}.mvt"
-      ],
-      "maxzoom": 14,
-      "attribution": "<a href='https://www.openmaptiles.org/'>OpenMapTiles</a>, <a href='https://www.openstreetmap.org/copyright/'>OpenStreetMap contributors</a>"
     }
   },
 

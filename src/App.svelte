@@ -1,6 +1,7 @@
 <script>
   import Map from './lib/Map.svelte';
   import SearchBox from './lib/SearchBox.svelte';
+  import Welcome from './lib/Welcome.svelte';
 
   let map;
 
@@ -14,3 +15,5 @@
 <Map bind:this={map} />
 
 <SearchBox onSelect={handleFlyTo} />
+
+<Welcome />

@@ -11,15 +11,16 @@
   mapStyle.glyphs = `${window.location.origin}/fonts/{fontstack}/{range}.pbf`;
   mapStyle.sources.reservations = {
     type: "geojson",
-    data: `${window.location.origin}/reservations.geojson`
+    data: `${window.location.origin}/reservations.geojson`,
   };
   mapStyle.sources.counties = {
     type: "geojson",
-    data: `${window.location.origin}/counties.geojson`
+    data: `${window.location.origin}/counties.geojson`,
   };
   mapStyle.sources["big-roads"] = {
     type: "geojson",
-    data: `${window.location.origin}/osm-big-roads.geojson`
+    data: `${window.location.origin}/osm-big-roads.geojson`,
+    attribution: "<a target='_blank' href='https://www.openmaptiles.org/'>OpenMapTiles</a>, <a target='_blank' href='https://www.openstreetmap.org/copyright/'>OpenStreetMap contributors</a>",
   };
   mapStyle.sources["places"] = {
     type: "geojson",

@@ -207,7 +207,7 @@
 <GeoJSON
   id="addresses"
   data={{type: "FeatureCollection", "features": []}}
-  attribution={'<a target="_blank" href="https://gishubdata-ndgov.hub.arcgis.com/">North Dakota GIS Hub</a> <a target="_blank" href="https://www.ndaco.org/programs_and_services/911/">Next Generation 911</a> <a target="_blank" href="https://gishubdata-ndgov.hub.arcgis.com/datasets/NDGOV::ndgishub-site-structure-address-points/about">Site Structures</a>'}
+  attribution={'<a target="_blank" href="https://gishubdata-ndgov.hub.arcgis.com/datasets/NDGOV::ndgishub-site-structure-address-points/about">North Dakota 911 address dataset</a>'}
   >
   <CircleLayer
     id="address-circles"
