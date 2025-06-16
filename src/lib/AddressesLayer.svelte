@@ -45,22 +45,24 @@
         compressors,
         onComplete,
       })
-    ).then(data => data.map(row => ({
-      type: "Feature",
-      geometry: {
-        type: "Point",
-        coordinates: [row[7], row[8]],
-      },
-      properties: {
-        num: row[0],
-        street: row[1],
-        unit: row[2],
-        muni: row[3],
-        msag: row[4],
-        zip: row[5],
-        src: row[6],
-      },
-    })));
+    ).then(data => {
+      forEachIndex[index.toString()] = data.map(row => ({
+        type: "Feature",
+        geometry: {
+          type: "Point",
+          coordinates: [row[7], row[8]],
+        },
+        properties: {
+          num: row[0],
+          street: row[1],
+          unit: row[2],
+          muni: row[3],
+          msag: row[4],
+          zip: row[5],
+          src: row[6],
+        },
+      }));
+    });
   }
 
   const { map, loaded } = $derived(getMapContext());
@@ -70,6 +72,15 @@
       map.on("move", handleMove);
     }
   });
+
+  function reloadSource() {
+    if (loaded) {
+      map.getSource("addresses").setData({
+        type: "FeatureCollection",
+        features: visibleIndexes.map(i => forEachIndex[i] ?? []).flat(),
+      });
+    }
+  }
 
   async function handleMove(event) {
     if (event.target.getZoom() >= MIN_ZOOM_FOR_POINTS) {
@@ -90,30 +101,19 @@
       if (hasNewIndexes(newVisibleIndexes)  &&  parquetFile !== null) {
         visibleIndexes = newVisibleIndexes;
 
-        let promises = {};
-        for (const index of visibleIndexes) {
-          if (!(index in forEachIndex)) {
-            promises[index] = readFromParquet(index);
+        for (const index in forEachIndex) {
+          if (!(Number(index) in visibleIndexes)) {
+            delete forEachIndex[index];
           }
         }
 
-        let newForEachIndex = {};
+        let promises = [];
         for (const index of visibleIndexes) {
-          if (index in forEachIndex) {
-            newForEachIndex[index] = forEachIndex[index];
-          }
-          else {
-            newForEachIndex[index] = await promises[index];
+          if (!(index.toString() in forEachIndex)) {
+            promises.push(readFromParquet(index));
           }
         }
-        forEachIndex = newForEachIndex;
-
-        if (loaded) {
-          map.getSource("addresses").setData({
-            type: "FeatureCollection",
-            features: visibleIndexes.map(i => forEachIndex[i] ?? []).flat(),
-          });
-        }
+        Promise.all(promises).then(reloadSource).catch(reloadSource);
       }
     }
   }
@@ -142,7 +142,6 @@
       });
       start = stop;
     }
-
   });
 
   function mouseEnter(event) {
@@ -161,17 +160,9 @@
   function handleClick(event) {
     let p = event.features[0].properties;
     let isMuni = p.muni != "Unincorporated"  &&  p.muni != "Undefined";
-    let unit;
-    if (p.unit == "") {
-      unit = "";
-    }
-    else if (p.unit.startsWith("APT ")) {
-      unit = `, Apt ${p.unit.substring(4)}`;
-    }
-    else {
-      unit = `, Unit ${p.unit}`;
-    }
+    let unit = p.unit == "" ? "" : ` (${p.unit})`;
     popupData = {
+      streetAddressHeader: p.unit == "" ? "Street address" : "Street address (and unit)",
       streetAddress: (p.num >= 0 ? p.num.toString() + " " : "") + p.street + unit,
       cityHeader: isMuni ? "Municipality" : "911 Community (MSAG)",
       city: isMuni ? p.muni : p.msag,
@@ -189,11 +180,17 @@
     }
   }
 
+  const REVERT_COPY_BUTTON_TIMEOUT = 10000;
+
   function handleCopy(event) {
     navigator.clipboard.writeText(popupData.addrToCopy);
     if (popupCopyButton !== null  &&  popupCopiedMessage !== null) {
       popupCopyButton.style.display = "none";
       popupCopiedMessage.style.display = "";
+      setTimeout(() => {
+        popupCopyButton.style.display = "";
+        popupCopiedMessage.style.display = "none";
+      }, REVERT_COPY_BUTTON_TIMEOUT);
     }
   }
 
@@ -202,6 +199,7 @@
 <GeoJSON
   id="addresses"
   data={{type: "FeatureCollection", "features": []}}
+  attribution={'<a target="_blank" href="https://gishubdata-ndgov.hub.arcgis.com/datasets/NDGOV::ndgishub-site-structure-address-points/about">North Dakota 911 address dataset</a>'}
   >
   <CircleLayer
     id="address-circles"
@@ -211,7 +209,7 @@
     onclick={handleClick}
     minzoom={MIN_ZOOM_FOR_POINTS}
     paint={{
-        "circle-color": "cyan",
+        "circle-color": "#5ef2de",
         "circle-stroke-width": [
           "interpolate", ["linear"], ["zoom"], 11, 0, 13, 0.5, 17, 2
         ],
@@ -237,13 +235,13 @@
           <button type="button" bind:this={popupAbsorbFocus} style="display: none;"></button>
 
           <!-- the "copy" button and "copied" message toggle "display: none;" -->
-          <button type="button" bind:this={popupCopyButton} onclick={handleCopy}>COPY TO CLIPBOARD</button>
-          <span bind:this={popupCopiedMessage} style="display: none;">COPIED!</span>
+          <button type="button" bind:this={popupCopyButton} onclick={handleCopy}>Copy to Clipboard</button>
+          <span bind:this={popupCopiedMessage} style="display: none;">Copied!</span>
 
         </span>
       </div>
       <div style="color: black;">
-        <strong>Street address:</strong> {popupData?.streetAddress}<br>
+        <strong>{popupData?.streetAddressHeader}:</strong> {popupData?.streetAddress}<br>
         <strong>{popupData?.cityHeader}:</strong> {popupData?.city}<br>
         <strong>Zip code:</strong> {popupData?.zip}<br><br>
           <details>

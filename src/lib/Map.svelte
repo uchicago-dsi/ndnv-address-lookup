@@ -2,26 +2,42 @@
   import { MapLibre } from 'svelte-maplibre';
   import 'maplibre-gl/dist/maplibre-gl.css';
 
+  import SmallRoadLayer from './SmallRoadLayer.svelte';
   import AddressLayer from './AddressesLayer.svelte';
   import mapStyle from '../data/map-style.json';
 
   // URL references in the map style JSON must be absolute
+  mapStyle.sprite = `${window.location.origin}/sprites`;
+  mapStyle.glyphs = `${window.location.origin}/fonts/{fontstack}/{range}.pbf`;
   mapStyle.sources.reservations = {
     type: "geojson",
-    data: `${window.location.origin}/reservations.geojson`
+    data: `${window.location.origin}/reservations.geojson`,
   };
   mapStyle.sources.counties = {
     type: "geojson",
-    data: `${window.location.origin}/counties.geojson`
+    data: `${window.location.origin}/counties.geojson`,
   };
-  mapStyle.sources.states = {
+  mapStyle.sources["big-roads"] = {
     type: "geojson",
-    data: `${window.location.origin}/states.geojson`
+    data: `${window.location.origin}/osm-big-roads.geojson`,
+    attribution: "<a target='_blank' href='https://www.openmaptiles.org/'>OpenMapTiles</a>, <a target='_blank' href='https://www.openstreetmap.org/copyright/'>OpenStreetMap contributors</a>",
   };
+  mapStyle.sources["places"] = {
+    type: "geojson",
+    data: `${window.location.origin}/places.geojson`
+  };
+
+  const hashLocation = window.location.hash;
 
   let theMap;
   function handleOnLoad(map) {
     theMap = map;
+
+    if (hashLocation) {
+      const [z, y, x] = hashLocation.substring(1).split("/");
+      theMap.setZoom(z);
+      theMap.setCenter([x, y]);
+    }
   }
 
   export function flyTo(item) {
@@ -29,6 +45,11 @@
       theMap.flyTo({ center: item.coords, zoom: item.zoom });
     }
   }
+
+  const MAP_BOUNDS = [-104.5181265794389, 45.63232713888373, -96.06887947161051, 49.2702273475217];
+  const DX = 0.5 * (MAP_BOUNDS[2] - MAP_BOUNDS[0]);
+  const DY = 0.5 * (MAP_BOUNDS[3] - MAP_BOUNDS[1]);
+  const MAP_MAX_BOUNDS = [MAP_BOUNDS[0] - DX, MAP_BOUNDS[1] - DY, MAP_BOUNDS[2] + DX, MAP_BOUNDS[3] + DY]
 </script>
 
 <MapLibre 
@@ -37,9 +58,12 @@
   standardControls
   pitchWithRotate={false}
   dragRotate={false}
-  bounds={[-104.5181265794389, 45.63232713888373, -96.06887947161051, 49.2702273475217]}
+  bounds={MAP_BOUNDS}
+  maxBounds={MAP_MAX_BOUNDS}
   onload={handleOnLoad}
+  hash={true}
   >
+  <SmallRoadLayer />
   <AddressLayer />
 </MapLibre>
 
