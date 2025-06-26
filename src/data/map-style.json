@@ -28,11 +28,11 @@
       "id": "satellite",
       "type": "raster",
       "source": "google_satellite",
-      "minzoom": 13,
+      "minzoom": 10,
       "maxzoom": 24,
       "paint": {
         "raster-opacity": {
-          "stops": [[13, 0], [13.5, 1], [24, 1]]
+          "stops": [[10, 0], [10.5, 1], [24, 1]]
         }
       }
     },
