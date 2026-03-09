@@ -39,6 +39,11 @@ def parse_args() -> argparse.Namespace:
         default=1,
         help="Number of concurrent subprocesses to run",
     )
+    parser.add_argument(
+        "--previous",
+        type=Path,
+        help="CSV from a previous run; rows whose original index already appears are skipped",
+    )
     return parser.parse_args()
 
 
@@ -60,6 +65,23 @@ def stringify_result(process: subprocess.CompletedProcess[str]) -> str:
     if stderr:
         return stderr
     return stdout
+
+
+def load_previous_indices(path: Path) -> set[int]:
+    completed: set[int] = set()
+    with path.open("r", encoding="utf-8", newline="") as stream:
+        reader = csv.DictReader(stream)
+        if "index" not in (reader.fieldnames or []):
+            raise ValueError(f"{path} does not contain an 'index' column")
+        for row in reader:
+            value = (row.get("index") or "").strip()
+            if not value:
+                continue
+            try:
+                completed.add(int(value))
+            except ValueError:
+                continue
+    return completed
 
 
 def run_lookup(
@@ -98,6 +120,12 @@ def main() -> int:
     shuffled = dataframe.reset_index().sample(frac=1, random_state=args.seed)
     if args.limit is not None:
         shuffled = shuffled.head(args.limit)
+
+    previous_indices: set[int] = set()
+    if args.previous is not None:
+        previous_indices = load_previous_indices(args.previous)
+        if previous_indices:
+            shuffled = shuffled[~shuffled["index"].isin(previous_indices)]
 
     writer = csv.writer(sys.stdout)
     writer.writerow(["index", "num", "zip", "street", "result"])
