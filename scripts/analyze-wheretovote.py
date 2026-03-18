@@ -11,6 +11,7 @@ import geopandas as gpd
 import pandas as pd
 import pyarrow.parquet as pq
 from shapely import MultiPoint, voronoi_polygons
+from shapely.geometry import MultiPolygon
 from tqdm.auto import tqdm
 
 
@@ -683,6 +684,14 @@ def dissolve_with_attributes(gdf: gpd.GeoDataFrame, group_cols: list[str]) -> gp
     return gpd.GeoDataFrame(dissolved, geometry="geometry", crs=gdf.crs)
 
 
+def promote_to_multipolygon(geometry):
+    if geometry.geom_type == "Polygon":
+        return MultiPolygon([geometry])
+    if geometry.geom_type == "MultiPolygon":
+        return geometry
+    raise ValueError(f"Expected polygonal geometry, got {geometry.geom_type}")
+
+
 def build_voronoi_areas(
     wheretovote: gpd.GeoDataFrame, counties: gpd.GeoDataFrame, districts: gpd.GeoDataFrame
 ) -> tuple[gpd.GeoDataFrame, gpd.GeoDataFrame]:
@@ -690,8 +699,13 @@ def build_voronoi_areas(
         counties[["county", "county_fp", "geometry"]],
         districts[["district", "district_int", "geometry"]],
         how="intersection",
+        keep_geom_type=False,
     )
     intersections = intersections[~intersections.geometry.is_empty].copy()
+    intersections = intersections[
+        intersections.geometry.geom_type.isin(["Polygon", "MultiPolygon"])
+    ].copy()
+    intersections["geometry"] = intersections["geometry"].map(promote_to_multipolygon)
 
     intersections_proj = intersections.to_crs(VORONOI_CRS)
     wheretovote_proj = wheretovote.to_crs(VORONOI_CRS)
@@ -745,6 +759,12 @@ def build_voronoi_areas(
             lambda geometry: geometry_to_cell[geometry.wkb_hex]
         )
         original_voronoi = original_voronoi[~original_voronoi.geometry.is_empty].copy()
+        original_voronoi = original_voronoi[
+            original_voronoi.geometry.geom_type.isin(["Polygon", "MultiPolygon"])
+        ].copy()
+        original_voronoi["geometry"] = original_voronoi["geometry"].map(
+            promote_to_multipolygon
+        )
 
         polling_group_cols = [
             "county",
