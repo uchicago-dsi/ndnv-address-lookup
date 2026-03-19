@@ -13,7 +13,9 @@
   let parquetFile = null;
   const url = new URL("/911-addresses.parquet", import.meta.url).href;
   const pollingPlacesUrl = new URL("/polling-places-nodups.csv", import.meta.url).href;
+  const pollingPlaceLocationsUrl = new URL("/polling-places-locations.json", import.meta.url).href;
   let pollingPlaces = [];
+  let pollingPlaceLocations = {};
 
   function parseCsv(text) {
     let rows = [];
@@ -114,6 +116,8 @@
           zip: row[5],
           src: row[6],
           district: row[7],
+          lon: row[8],
+          lat: row[9],
           in_wheretovote: row[10],
           polling_places: row[11],
         },
@@ -207,6 +211,13 @@
     pollingPlaces = parseCsv(await response.text());
   });
 
+  fetch(pollingPlaceLocationsUrl).then(async response => {
+    if (!response.ok) {
+      return;
+    }
+    pollingPlaceLocations = await response.json();
+  });
+
   function mouseEnter(event) {
     event.map.getCanvas().style.cursor = "pointer";
   }
@@ -231,6 +242,8 @@
       city: isMuni ? p.muni : p.msag,
       zip: p.zip,
       district: p.district?.trim?.() ?? "",
+      lon: p.lon,
+      lat: p.lat,
       in_wheretovote: p.in_wheretovote,
       polling_places: p.polling_places,
       src_title: sourceList[p.src].title,
@@ -278,14 +291,29 @@
       return "";
     }
 
+    const origin = `${popupData?.lat},${popupData?.lon}`;
     let rows = popupData.polling_places
       .split(" ")
       .map(x => Number(x))
       .filter(x => Number.isInteger(x)  &&  x >= 0  &&  x < pollingPlaces.length)
       .map(x => pollingPlaces[x])
-      .map(place =>
-        `${place.polling_location}<br>${place.address}, ${place.city} ${place.zip_code}<br>(${place.polling_hours}, ${place.county_auditor_phone})`
-      )
+      .map(place => {
+        const coordinates = pollingPlaceLocations[place.polling_location];
+        const destination = Array.isArray(coordinates)  &&  coordinates.length == 2
+          ? `${coordinates[1]},${coordinates[0]}`
+          : null;
+        const addressLine = `${place.address}, ${place.city} ${place.zip_code}`;
+
+        if (destination === null) {
+          return `${place.polling_location}<br>${addressLine}<br>(${place.polling_hours}, ${place.county_auditor_phone})`;
+        }
+
+        const url = "https://www.google.com/maps/dir/?api=1"
+          + `&origin=${encodeURIComponent(origin)}`
+          + `&destination=${encodeURIComponent(destination)}`
+          + "&travelmode=driving";
+        return `${place.polling_location}<br><a href="${url}" target="_blank" rel="noreferrer">${addressLine}</a><br>(${place.polling_hours}, ${place.county_auditor_phone})`;
+      })
       .join("<br><br>");
 
     if (popupData?.in_wheretovote) {
