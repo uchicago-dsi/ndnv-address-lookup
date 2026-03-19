@@ -1,0 +1,666 @@
+{
+  "Twin Buttes Community Center": [-102.25695617765686, 47.514993040575966],
+  "Enchanted Castle": [-102.56295709130461, 46.41885443177998],
+  "Pifer's Auction & Realty Building": [-99.92164761677367, 46.86354522420199],
+  "Edgeley National Guard Armory": [-98.71670012032487, 46.35568054459361],
+  "Ralph Wells Community Center": [-101.84174013780319, 47.669579935846436],
+  "Mountrail County South Complex": [-102.3802828039157, 48.29720687299539],
+  "Pierce Congregational Church": [-103.07514829758594, 46.352400984573464],
+  "Steele County Courthouse": [-97.83825432069641, 47.51453469191752],
+  "4H Building": [
+    -100.72838107982028,
+    46.80572546576273
+  ],
+  "Abercrombie Community Hall": [
+    -96.729957865171,
+    46.447618886119
+  ],
+  "Adams County Courthouse": [
+    -102.635260698712,
+    46.001236890005
+  ],
+  "Alerus Center Voting Center": [
+    -97.088251657994,
+    47.911200925708
+  ],
+  "Almont Fire Hall": [
+    -101.507781336819,
+    46.730151425966
+  ],
+  "American Legion": [
+    -99.2998556326116,
+    46.893673147694756
+  ],
+  "Arthur Community Hall": [
+    -97.218026190293,
+    47.101670999191
+  ],
+  "Atonement Lutheran": [
+    -96.804753498217,
+    46.810683454077
+  ],
+  "BankNorth Mall Community Room": [
+    -98.296047108769,
+    46.357205536657
+  ],
+  "Barnes County Courthouse": [
+    -98.005163145006,
+    46.926334001827
+  ],
+  "Beach Community Center": [
+    -104.003943267981,
+    46.914812221864
+  ],
+  "Belfield City Hall": [
+    -103.199125899171,
+    46.886664731548
+  ],
+  "Benson County Courthouse": [
+    -99.249586262155,
+    48.069015581306
+  ],
+  "Berthold Senior Center": [
+    -101.736707773879,
+    48.315540208066
+  ],
+  "Beulah Civic Center": [
+    -101.7753351552059,
+    47.27054919341863
+  ],
+  "Biesiot Activites Center (BAC)": [
+    -102.810795008735,
+    46.882902849729
+  ],
+  "Billings County Courthouse (Vote Center)": [
+    -103.5225707,
+    46.9126584
+  ],
+  "Bismarck Baptist Church": [
+    -100.759235083963,
+    46.82134472573
+  ],
+  "Bismarck Event Center-Main Arena": [
+    -100.784614781616,
+    46.80293087587
+  ],
+  "Bottineau County Courthouse": [
+    -100.449310399687,
+    48.827376450693
+  ],
+  "Bowdon Fire Hall": [
+    -99.707607867357,
+    47.470044473763
+  ],
+  "Bowman City Hall": [
+    -103.393316249065,
+    46.183274460653
+  ],
+  "Bowman Four Seasons Bld": [
+    -103.394778711053,
+    46.176799934229
+  ],
+  "Brown Memorial": [
+    -99.135330609121,
+    47.680087586139
+  ],
+  "Burke County Courthouse": [
+    -102.245993675466,
+    48.803107556739
+  ],
+  "Burlington City Hall": [
+    -101.428633368526,
+    48.273819073431
+  ],
+  "Cando Armory": [
+    -99.203750159806,
+    48.490795585499
+  ],
+  "Capital Credit Union (fka: Flasher Credit Union)": [
+    -101.231962747186,
+    46.45340813738
+  ],
+  "Carrington Library": [
+    -99.123447586439,
+    47.45043600484
+  ],
+  "Cartwright Hall": [
+    -103.92632069623083,
+    47.85954722508195
+  ],
+  "Casselton City Hall": [
+    -97.207968974816,
+    46.901305588467
+  ],
+  "Cavalier County Courthouse": [
+    -98.36817950591,
+    48.761239028368
+  ],
+  "Century Baptist Church": [
+    -100.795820610786,
+    46.850496698703
+  ],
+  "City Auditors Office - Enderlin": [
+    -97.600989284821,
+    46.623850751331
+  ],
+  "Colfax Community Center": [
+    -96.87650545651,
+    46.469651996803
+  ],
+  "Derrick Dixon Event Center": [
+    -99.7428963,
+    48.8415486
+  ],
+  "Divide County Courthouse": [
+    -103.294828431247,
+    48.914099440958
+  ],
+  "Doubletree Inn": [
+    -96.886708419683,
+    46.85123075931
+  ],
+  "Dunn County Courthouse": [
+    -102.770522445764,
+    47.231043039954
+  ],
+  "Dunseith City Hall": [
+    -100.0618604,
+    48.8130551
+  ],
+  "EXPO": [
+    -97.685363,
+    46.4394748
+  ],
+  "Eagles Club": [
+    -100.892704,
+    46.838813
+  ],
+  "East Auditorium (fka: The Element)": [
+    -100.764000220082,
+    46.841099775295
+  ],
+  "El Zagal Shrine": [
+    -96.782980230995,
+    46.896549583108
+  ],
+  "Elgin Community Center": [
+    -101.845219084002,
+    46.404664494307
+  ],
+  "Ellendale Church of the Nazarene": [
+    -98.527043885704,
+    46.006468036716
+  ],
+  "Emerado Community Center": [
+    -97.370270608266,
+    47.916456626799
+  ],
+  "Emmons County Courthouse": [
+    -100.236332634891,
+    46.266663514992
+  ],
+  "Engage Church": [
+    -100.930759860728,
+    46.863694845103
+  ],
+  "Ernie French Center": [
+    -103.735849182457,
+    48.139837266383
+  ],
+  "Fairfield Fire Hall (Vote Center)": [
+    -103.2062641,
+    47.1258495
+  ],
+  "Fairmount Community Center": [
+    -96.605499556505,
+    46.054949418766
+  ],
+  "Fargo Civic Center": [
+    -96.784551913695,
+    46.878606235374
+  ],
+  "Fargo Parks Sports Center": [
+    -96.8460769,
+    46.8052821
+  ],
+  "FargoDome": [
+    -96.798105088053,
+    46.902909063878
+  ],
+  "Festival Hall (Wells County Fairgrounds)": [
+    -99.629503874593,
+    47.645958722524
+  ],
+  "First Lutheran Church": [
+    -100.897735177117,
+    46.834973073905
+  ],
+  "Forman City Hall": [
+    -97.636451994995,
+    46.105063856644
+  ],
+  "Ft. Totten Community Center": [
+    -98.9932699,
+    47.9777243
+  ],
+  "Garrison City Auditorium (Vote Center)": [
+    -101.417477889544,
+    47.651246605246
+  ],
+  "Gilby Presbyterian Church": [
+    -97.467724919895,
+    48.083347461925
+  ],
+  "Glen Ullin Municipal Building": [
+    -101.830268180089,
+    46.815722793813
+  ],
+  "Good Shepherd Church": [
+    -100.792013400136,
+    46.823180474317
+  ],
+  "GracePoint Church": [
+    -100.792706894574,
+    46.852522041218
+  ],
+  "Grant County Courthouse": [
+    -101.565246667406,
+    46.421642408845
+  ],
+  "Grenora City Hall": [
+    -103.937152018809,
+    48.61911170821
+  ],
+  "Griggs County Courthouse": [
+    -98.125231348262,
+    47.441533338754
+  ],
+  "Grimsrud Elementary School": [
+    -100.800317753044,
+    46.827238636288
+  ],
+  "Halliday City Hall": [
+    -102.335558636101,
+    47.354512706816
+  ],
+  "Hankinson Community Center": [
+    -96.902143073353,
+    46.072153328907
+  ],
+  "Hartl Ag Building, RRVF": [
+    -96.93056123570534,
+    46.873937091201725
+  ],
+  "Harvey City Hall": [
+    -99.934984105922,
+    47.770571131337
+  ],
+  "Harwood Community Center": [
+    -96.880439310366,
+    46.976023867318
+  ],
+  "Hazelton City Hall": [
+    -100.277402757675,
+    46.484731973453
+  ],
+  "Hebron Community Center": [
+    -102.046830011666,
+    46.902035008143
+  ],
+  "Hope Church Voting Center": [
+    -97.049762681313,
+    47.903883602138
+  ],
+  "Horace Senior Ctr": [
+    -96.905507633708,
+    46.759819429964
+  ],
+  "ICON Arena/Park Dist Offices Voting Center": [
+    -97.040880610122,
+    47.874973196397
+  ],
+  "Jamestown Civic Center": [
+    -98.705336443108,
+    46.910627145958
+  ],
+  "Kenmare Memorial Hall": [
+    -102.081658689122,
+    48.673607801674
+  ],
+  "Kindred City Hall": [
+    -97.018605063109,
+    46.649340676639
+  ],
+  "Lansford Mall": [
+    -101.37614127431,
+    48.629255801848
+  ],
+  "Larimore Senior Citizens Center": [
+    -97.623781477321,
+    47.903992264292
+  ],
+  "Liberty Elementary School": [
+    -100.791165505454,
+    46.862051117728
+  ],
+  "Lidgerwood KC Hall": [
+    -97.15205335297,
+    46.074761228172
+  ],
+  "Lincoln Elementary School": [
+    -100.690797928875,
+    46.768752950779
+  ],
+  "Logan County Courthouse": [
+    -99.768947975913,
+    46.503166589916
+  ],
+  "Lord of Life Lutheran Church": [
+    -100.751910123558,
+    46.818311275882
+  ],
+  "Mandan Airport": [
+    -100.901409162249,
+    46.767533292943
+  ],
+  "Mandaree School Cafeteria": [
+    -102.67529595097928,
+    47.73625932145035
+  ],
+  "Manvel Public School": [
+    -97.17660854249,
+    48.072678497924
+  ],
+  "Marmarth Community Center": [
+    -103.92333640312397,
+    46.296505966627066
+  ],
+  "Mayville Armory": [
+    -97.324263405209,
+    47.497439204576
+  ],
+  "McClusky City Hall": [
+    -100.442542398279,
+    47.481873936659
+  ],
+  "McHenry County Courthouse": [
+    -100.40509806095,
+    48.343531198545
+  ],
+  "McIntosh County Courthouse": [
+    -99.370159108035,
+    46.035569705467
+  ],
+  "Memorial Building": [
+    -98.860271126413,
+    48.113484782251
+  ],
+  "Menoken School": [
+    -100.532099286664,
+    46.82173344612
+  ],
+  "Midway Lanes": [
+    -100.851083590587,
+    46.818616110396
+  ],
+  "Minot Muncipal Auditorium - Room 201": [
+    -101.298488994401,
+    48.233202767296
+  ],
+  "Minot Municipal Auditorium-Armory": [
+    -101.298488994401,
+    48.233202767296
+  ],
+  "Mott Armory": [
+    -102.326914862494,
+    46.375935433025
+  ],
+  "Nedrose All Seasons Arena": [
+    -101.263459835298,
+    48.231462010529
+  ],
+  "Nelson County Courthouse": [
+    -98.345639226628,
+    48.041601724556
+  ],
+  "New England Memorial Hall": [
+    -102.867911373538,
+    46.540544258823
+  ],
+  "New Salem City Auditorium": [
+    -101.411326941123,
+    46.842499085574
+  ],
+  "New Town Civic Center Auditorium": [
+    -102.484183615919,
+    47.979618978175
+  ],
+  "North Fox - St Anthony Mission": [
+    -102.59886270337694,
+    47.73151020754429
+  ],
+  "Northwood Community Center": [
+    -97.56813793256,
+    47.734364346098
+  ],
+  "Oakes Community Center": [
+    -98.09337650306,
+    46.137534158959
+  ],
+  "Oliver County Courthouse": [
+    -101.299354980419,
+    47.11530405316
+  ],
+  "Palermo City Hall": [
+    -102.2275005,
+    48.3434651
+  ],
+  "Parshall American Legion Building": [
+    -102.133298983293,
+    47.95313282545
+  ],
+  "Pembina County Courthouse": [
+    -97.625597355525,
+    48.791724542246
+  ],
+  "Pierce County Courthouse": [
+    -99.993604230616,
+    48.368632440117
+  ],
+  "Plaza R&B Complex": [
+    -101.95839949904145,
+    48.025572015146956
+  ],
+  "Prairie Hills Mall": [
+    -102.789813272331,
+    46.901501687275
+  ],
+  "Ramada Inn": [
+    -96.832908050996,
+    46.861711450632
+  ],
+  "Ray City Hall": [
+    -103.165711930433,
+    48.343369507483
+  ],
+  "Redeemer Lutheran Church": [
+    -100.87981176434194,
+    46.81578435321608
+  ],
+  "Renville County Courthouse": [
+    -101.509342171274,
+    48.763561475888
+  ],
+  "Rhame Legion Building": [
+    -103.655012363049,
+    46.233030697691
+  ],
+  "Richardton City Hall": [
+    -102.316433748386,
+    46.883844456498
+  ],
+  "Rolla City Hall": [
+    -99.61511440764,
+    48.859000139361
+  ],
+  "Ross Community Building": [
+    -102.54357620812192,
+    48.31364759839395
+  ],
+  "Runnings Voting Center aka Home of Economy": [
+    -97.052692888786,
+    47.934077205153
+  ],
+  "Rustad Recreation Center": [
+    -96.889569180274,
+    46.840956723804
+  ],
+  "Ryder City Hall": [
+    -101.673649065676,
+    47.916561881706
+  ],
+  "Sawyer City Hall": [
+    -101.0523481,
+    48.0917171
+  ],
+  "Scranton Community Center": [
+    -103.14306525823345,
+    46.147687681400576
+  ],
+  "Sioux County Courthouse": [
+    -100.630772,
+    46.0864633
+  ],
+  "Slope County Courthouse": [
+    -103.321466999036,
+    46.482335624413
+  ],
+  "Solheim Elementary School": [
+    -100.797103083881,
+    46.782344605961
+  ],
+  "St John Senior Center": [
+    -99.70991306148119,
+    48.94320675230694
+  ],
+  "St. Anthony Hall": [
+    -100.909383669652,
+    46.61749607929
+  ],
+  "Stanley High School Commons Area": [
+    -102.392116840304,
+    48.310349578536
+  ],
+  "State Fair Center": [
+    -101.26172168869962,
+    48.23598335977108
+  ],
+  "Sterling School": [
+    -100.293230039002,
+    46.812849462072
+  ],
+  "Sundre All Seasons Arena": [
+    -101.26256948194568,
+    48.236616599451054
+  ],
+  "Sunrise Elementary School": [
+    -100.718254702071,
+    46.846731018817
+  ],
+  "Surrey City Hall": [
+    -101.133853164616,
+    48.237351322479
+  ],
+  "The Blue Room": [
+    -100.161108821046,
+    46.133737076553
+  ],
+  "Thompson Community Center": [
+    -97.109554955141,
+    47.775733282641
+  ],
+  "Tioga Community Center": [
+    -102.931815021647,
+    48.400061362397
+  ],
+  "Tower City Community Center": [
+    -97.67542540447879,
+    46.92429547486622
+  ],
+  "Triumph West": [
+    -96.903642160296,
+    46.822081870796
+  ],
+  "Turtle Lake City Hall (Vote Center)": [
+    -100.89150437018806,
+    47.52169181006531
+  ],
+  "United Tribes Technical College-Skills Center": [
+    -100.76081232111152,
+    46.76831911037231
+  ],
+  "WWI Memorial Building": [
+    -99.84384272319237,
+    48.66201815868568
+  ],
+  "Wahpeton Event Center": [
+    -96.612961389213,
+    46.289569365687
+  ],
+  "Walsh County Courthouse": [
+    -97.405427003831,
+    48.418468366086
+  ],
+  "Warwick Public School": [
+    -98.7111368,
+    47.8578778
+  ],
+  "Washburn Memorial Building (Vote Center)": [
+    -101.027633117758,
+    47.288377346544
+  ],
+  "Watford City City Hall": [
+    -103.281671363872,
+    47.803447886886
+  ],
+  "West Fargo Fire Hall": [
+    -96.880217843351,
+    46.866225982916
+  ],
+  "Westhope City Hall": [
+    -101.020029047466,
+    48.909459130303
+  ],
+  "White Earth City Hall": [
+    -102.772337959472,
+    48.380850905695
+  ],
+  "Wildrose Fire Hall": [
+    -103.1842499,
+    48.6304097
+  ],
+  "Williams County Fairgrounds": [
+    -103.6119058760435,
+    48.195121114929115
+  ],
+  "Williston ARC": [
+    -103.609304369157,
+    48.161358054934
+  ],
+  "Wilton County Shop": [
+    -100.643633734746,
+    47.140102278862
+  ],
+  "Wing Fire Hall": [
+    -100.27971094265,
+    47.141500554681
+  ],
+  "Wishek Public School Cafeteria": [
+    -99.550507985876,
+    46.257988986383
+  ],
+  "Wyndmere Fire Hall": [
+    -97.129381881038,
+    46.264738409028
+  ]
+}
