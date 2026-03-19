@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import argparse
 import csv
 import hashlib
 import json
@@ -26,9 +27,10 @@ DISTRICTS_PATH = Path("public/legislative-districts-exact.gpkg")
 WHERETOVOTE_POINTS_PATH = Path("wheretovote-points.gpkg")
 MISSING_POINTS_PATH = Path("missing-points.gpkg")
 POLLING_AREAS_PATH = Path("wheretovote-polling-areas.gpkg")
-PRECINCT_AREAS_PATH = Path("wheretovote-precinct-areas.gpkg")
+LEGACY_PRECINCT_AREAS_PATH = Path("wheretovote-precinct-areas.gpkg")
 
 VORONOI_CRS = "EPSG:5070"
+DEFAULT_MIN_ADDRESSES = 10
 
 PRECINCT_RE = re.compile(r"^(\d{6,})\s*\((\d{4})\)$")
 LEGISLATIVE_RE = re.compile(r"^District\s+0*(\d+)([A-Za-z]?)$")
@@ -673,7 +675,6 @@ def build_polling_fields(wheretovote: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
     wheretovote["polling_color"] = [
         polling_by_key[key]["polling_color"] for key in key_tuples
     ]
-    wheretovote["precinct_color"] = wheretovote["precinct"].map(stable_color)
     return wheretovote.drop(columns=["county_key", "district_key", "precinct_key"])
 
 
@@ -685,7 +686,7 @@ def dissolve_with_attributes(gdf: gpd.GeoDataFrame, group_cols: list[str]) -> gp
 
 def build_voronoi_areas(
     wheretovote: gpd.GeoDataFrame, counties: gpd.GeoDataFrame, districts: gpd.GeoDataFrame
-) -> tuple[gpd.GeoDataFrame, gpd.GeoDataFrame]:
+) -> gpd.GeoDataFrame:
     intersections = gpd.overlay(
         counties[["county", "county_fp", "geometry"]],
         districts[["district", "district_int", "geometry"]],
@@ -697,8 +698,6 @@ def build_voronoi_areas(
     wheretovote_proj = wheretovote.to_crs(VORONOI_CRS)
 
     polling_areas = []
-    precinct_areas = []
-
     area_iterator = tqdm(
         intersections_proj.itertuples(index=False),
         total=len(intersections_proj),
@@ -751,23 +750,12 @@ def build_voronoi_areas(
             "county_int",
             "district",
             "district_int",
-                    "polling_min",
-                    "polling",
-                    "polling_color",
-                ]
-        precinct_group_cols = [
-            "county",
-            "county_int",
-            "district",
-            "district_int",
-            "precinct",
-            "precinct_color",
+            "polling_min",
+            "polling",
+            "polling_color",
         ]
 
         polling_areas.append(dissolve_with_attributes(original_voronoi, polling_group_cols))
-        precinct_areas.append(
-            dissolve_with_attributes(original_voronoi, precinct_group_cols)
-        )
 
     polling_gdf = (
         gpd.GeoDataFrame(
@@ -778,17 +766,39 @@ def build_voronoi_areas(
         if polling_areas
         else gpd.GeoDataFrame({"geometry": []}, geometry="geometry", crs=counties.crs)
     )
-    precinct_gdf = (
-        gpd.GeoDataFrame(
-            pd.concat(precinct_areas, ignore_index=True),
-            geometry="geometry",
-            crs=intersections_proj.crs,
-        ).to_crs(counties.crs)
-        if precinct_areas
-        else gpd.GeoDataFrame({"geometry": []}, geometry="geometry", crs=counties.crs)
-    )
+    return polling_gdf
 
-    return polling_gdf, precinct_gdf
+
+def remove_small_polling_area_components(
+    polling_areas: gpd.GeoDataFrame,
+    wheretovote_points: gpd.GeoDataFrame,
+    min_addresses: int,
+) -> gpd.GeoDataFrame:
+    if min_addresses <= 0 or len(polling_areas) == 0:
+        return polling_areas
+
+    components = polling_areas.explode(index_parts=False).reset_index(drop=True)
+    if len(components) == 0:
+        return polling_areas.iloc[0:0].copy()
+
+    components = components.reset_index(names="component_id")
+    join = gpd.sjoin(
+        components[["component_id", "geometry"]],
+        wheretovote_points[["geometry"]],
+        how="left",
+        predicate="contains",
+    )
+    counts = (
+        join.groupby("component_id")["index_right"]
+        .count()
+        .reindex(components["component_id"], fill_value=0)
+    )
+    kept = components.loc[counts >= min_addresses].drop(columns=["component_id"])
+    if len(kept) == 0:
+        return polling_areas.iloc[0:0].copy()
+
+    group_cols = [column for column in kept.columns if column != "geometry"]
+    return dissolve_with_attributes(kept, group_cols)
 
 
 def write_gpkg(gdf: gpd.GeoDataFrame, path: Path) -> None:
@@ -797,7 +807,22 @@ def write_gpkg(gdf: gpd.GeoDataFrame, path: Path) -> None:
     gdf.to_file(path, driver="GPKG")
 
 
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "--min-addresses",
+        type=int,
+        default=DEFAULT_MIN_ADDRESSES,
+        help="Drop simply connected polling-area polygons containing fewer than this many wheretovote points.",
+    )
+    args = parser.parse_args()
+    if args.min_addresses < 0:
+        parser.error("--min-addresses must be non-negative")
+    return args
+
+
 def main() -> int:
+    args = parse_args()
     key_value_pairs = read_key_value_pairs()
     addresses = read_addresses()
     counties = gpd.read_file(COUNTIES_PATH)
@@ -815,9 +840,15 @@ def main() -> int:
     write_gpkg(wheretovote, WHERETOVOTE_POINTS_PATH)
     write_gpkg(missing, MISSING_POINTS_PATH)
 
-    polling_areas, precinct_areas = build_voronoi_areas(wheretovote, counties, districts)
+    polling_areas = build_voronoi_areas(wheretovote, counties, districts)
+    polling_areas = remove_small_polling_area_components(
+        polling_areas,
+        wheretovote,
+        args.min_addresses,
+    )
     write_gpkg(polling_areas, POLLING_AREAS_PATH)
-    write_gpkg(precinct_areas, PRECINCT_AREAS_PATH)
+    if LEGACY_PRECINCT_AREAS_PATH.exists():
+        LEGACY_PRECINCT_AREAS_PATH.unlink()
     return 0
 
 
