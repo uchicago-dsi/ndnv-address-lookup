@@ -17,6 +17,9 @@ import pyarrow.parquet as pq
 OUTPUT_PATH = (
     Path(__file__).resolve().parent.parent / "public" / "polling-places.parquet"
 )
+OUTPUT_CSV_PATH = (
+    Path(__file__).resolve().parent.parent / "public" / "polling-places-nodups.csv"
+)
 
 FIELD_NAMES = {
     "County": "county",
@@ -31,6 +34,16 @@ FIELD_NAMES = {
     "Polling Hours": "polling_hours",
     "County Auditor Phone": "county_auditor_phone",
 }
+
+SLIM_FIELD_NAMES = [
+    "polling_location",
+    "address",
+    "city",
+    "county",
+    "zip_code",
+    "polling_hours",
+    "county_auditor_phone",
+]
 
 
 def get_hidden_input_value(page_html: str, name: str) -> str:
@@ -120,6 +133,21 @@ def csv_bytes_to_table(csv_bytes: bytes) -> pa.Table:
     )
 
 
+def write_slim_deduplicated_csv(table: pa.Table, output_path: Path) -> None:
+    rows = zip(*(table.column(name).to_pylist() for name in SLIM_FIELD_NAMES), strict=True)
+    seen: set[tuple[str, ...]] = set()
+
+    with output_path.open("w", newline="", encoding="utf-8") as output_file:
+        writer = csv.DictWriter(output_file, fieldnames=SLIM_FIELD_NAMES)
+        writer.writeheader()
+
+        for row_values in rows:
+            if row_values in seen:
+                continue
+            seen.add(row_values)
+            writer.writerow(dict(zip(SLIM_FIELD_NAMES, row_values, strict=True)))
+
+
 def main() -> int:
     args = parse_args()
     source_url = build_source_url(args.eid)
@@ -131,7 +159,9 @@ def main() -> int:
         compression="snappy",
         use_dictionary=list(table.schema.names),
     )
+    write_slim_deduplicated_csv(table, OUTPUT_CSV_PATH)
     print(f"Wrote {OUTPUT_PATH}")
+    print(f"Wrote {OUTPUT_CSV_PATH}")
     return 0
 
 
