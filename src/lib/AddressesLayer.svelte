@@ -12,6 +12,59 @@
   let forEachIndex = {};
   let parquetFile = null;
   const url = new URL("/911-addresses.parquet", import.meta.url).href;
+  const pollingPlacesUrl = new URL("/polling-places-nodups.csv", import.meta.url).href;
+  let pollingPlaces = [];
+
+  function parseCsv(text) {
+    let rows = [];
+    let row = [];
+    let field = "";
+    let inQuotes = false;
+
+    for (let i = 0;  i < text.length;  i++) {
+      const char = text[i];
+      const next = text[i + 1];
+
+      if (inQuotes) {
+        if (char == '"'  &&  next == '"') {
+          field += '"';
+          i += 1;
+        }
+        else if (char == '"') {
+          inQuotes = false;
+        }
+        else {
+          field += char;
+        }
+      }
+      else if (char == '"') {
+        inQuotes = true;
+      }
+      else if (char == ",") {
+        row.push(field);
+        field = "";
+      }
+      else if (char == "\n") {
+        row.push(field);
+        rows.push(row);
+        row = [];
+        field = "";
+      }
+      else if (char != "\r") {
+        field += char;
+      }
+    }
+
+    if (field != ""  ||  row.length != 0) {
+      row.push(field);
+      rows.push(row);
+    }
+
+    const headers = rows[0] ?? [];
+    return rows.slice(1).map(values =>
+      Object.fromEntries(headers.map((header, index) => [header, values[index] ?? ""]))
+    );
+  }
 
   function hasNewIndexes(newVisibleIndexes) {
     if (newVisibleIndexes.length > visibleIndexes.length) {
@@ -38,8 +91,8 @@
     return new Promise((onComplete) =>
       parquetRead({
         file: parquetFile,
-        //          0        1        2       3       4      5      6      7           8      9
-        columns: ["num", "street", "unit", "muni", "msag", "zip", "src", "district", "lon", "lat"],
+        //          0        1        2       3       4      5      6      7           8      9      10                11
+        columns: ["num", "street", "unit", "muni", "msag", "zip", "src", "district", "lon", "lat", "in_wheretovote", "polling_places"],
         rowStart: regions[index].start,
         rowEnd: regions[index].stop,
         compressors,
@@ -61,6 +114,8 @@
           zip: row[5],
           src: row[6],
           district: row[7],
+          in_wheretovote: row[10],
+          polling_places: row[11],
         },
       }));
     });
@@ -145,6 +200,13 @@
     }
   });
 
+  fetch(pollingPlacesUrl).then(async response => {
+    if (!response.ok) {
+      return;
+    }
+    pollingPlaces = parseCsv(await response.text());
+  });
+
   function mouseEnter(event) {
     event.map.getCanvas().style.cursor = "pointer";
   }
@@ -169,6 +231,8 @@
       city: isMuni ? p.muni : p.msag,
       zip: p.zip,
       district: p.district?.trim?.() ?? "",
+      in_wheretovote: p.in_wheretovote,
+      polling_places: p.polling_places,
       src_title: sourceList[p.src].title,
       src_name: sourceList[p.src].name,
       src_phone: sourceList[p.src].phone,
@@ -207,6 +271,29 @@
   function handleWhereToVoteLookup(event) {
     let houseNumber = popupData?.streetAddress.match(/^\d+/)?.[0] ?? "";
     copyAddress(houseNumber);
+  }
+
+  function list_polling_places(popupData) {
+    if (popupData?.polling_places == "") {
+      return "";
+    }
+
+    let rows = popupData.polling_places
+      .split(" ")
+      .map(x => Number(x))
+      .filter(x => Number.isInteger(x)  &&  x >= 0  &&  x < pollingPlaces.length)
+      .map(x => pollingPlaces[x])
+      .map(place =>
+        `${place.polling_location}<br>${place.address}, ${place.city} ${place.zip_code}<br>(${place.polling_hours}, ${place.county_auditor_phone})`
+      )
+      .join("<br><br>");
+
+    if (popupData?.in_wheretovote) {
+      return `<br><br><details><summary><strong>Polling Places (from WhereToVote)</strong></summary>${rows}</details>`;
+    }
+    else {
+      return `<br><br><details><summary><strong>Polling Places (inferred from location)</strong></summary>${rows}</details>`;
+    }
   }
 
 </script>
@@ -285,7 +372,7 @@
           target="_blank"
           rel="noreferrer"
           onclick={handleWhereToVoteLookup}
-        >Copy number and go to WhereToVote</a>
+        >Copy number and go to WhereToVote</a>{@html list_polling_places(popupData)}
       </div>
     </Popup>
   </CircleLayer>
