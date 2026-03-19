@@ -202,6 +202,11 @@
     copyAddress(`${popupData.addrToCopy}, USA`);
   }
 
+  function handleWhereToVoteLookup(event) {
+    let houseNumber = popupData?.streetAddress.match(/^\d+/)?.[0] ?? "";
+    copyAddress(houseNumber);
+  }
+
 </script>
 
 <GeoJSON
@@ -251,7 +256,7 @@
       <div style="color: black;">
         <strong>{popupData?.streetAddressHeader}:</strong> {popupData?.streetAddress}<br>
         <strong>{popupData?.cityHeader}:</strong> {popupData?.city}<br>
-        <strong>Zip code:</strong> {popupData?.zip}<br><br>
+        <strong>Zip code:</strong> {popupData?.zip}<br>
           <details>
           <summary><strong>Source</strong></summary>
           <strong>{popupData?.src_title}</strong><br>
@@ -265,7 +270,14 @@
           target="_blank"
           rel="noreferrer"
           onclick={handleBallotpediaLookup}
-        >Copy address and lookup ballot</a>
+        >Copy address and go to Ballotpedia</a>
+        <br>
+        <a
+          href="https://vip.sos.nd.gov/WhereToVote.aspx"
+          target="_blank"
+          rel="noreferrer"
+          onclick={handleWhereToVoteLookup}
+        >Copy number and go to WhereToVote</a>
       </div>
     </Popup>
   </CircleLayer>
