@@ -38,8 +38,8 @@
     return new Promise((onComplete) =>
       parquetRead({
         file: parquetFile,
-        //          0        1        2       3       4      5      6      7      8
-        columns: ["num", "street", "unit", "muni", "msag", "zip", "src", "lon", "lat"],
+        //          0        1        2       3       4      5      6      7           8      9
+        columns: ["num", "street", "unit", "muni", "msag", "zip", "src", "district", "lon", "lat"],
         rowStart: regions[index].start,
         rowEnd: regions[index].stop,
         compressors,
@@ -50,7 +50,7 @@
         type: "Feature",
         geometry: {
           type: "Point",
-          coordinates: [row[7], row[8]],
+          coordinates: [row[8], row[9]],
         },
         properties: {
           num: row[0],
@@ -60,6 +60,7 @@
           msag: row[4],
           zip: row[5],
           src: row[6],
+          district: row[7],
         },
       }));
     });
@@ -167,6 +168,7 @@
       cityHeader: isMuni ? "Municipality" : "911 Community (MSAG)",
       city: isMuni ? p.muni : p.msag,
       zip: p.zip,
+      district: p.district?.trim?.() ?? "",
       src_title: sourceList[p.src].title,
       src_name: sourceList[p.src].name,
       src_phone: sourceList[p.src].phone,
@@ -264,6 +266,12 @@
           <strong>Phone:</strong> {popupData?.src_phone}<br>
           <strong>Email:</strong> <a href="mailto:{popupData?.src_email}">{popupData?.src_email}</a>
         </details>
+        <br>
+        <a
+          href="https://ndlegis.gov/districts/2025-2032/district-{popupData.district.replace(/[AB]$/, '')}"
+          target="_blank"
+          rel="noreferrer"
+        >Legislative District {popupData.district}</a>
         <br>
         <a
           href="https://ballotpedia.org/Sample_Ballot_Lookup"
