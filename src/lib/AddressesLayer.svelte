@@ -182,8 +182,12 @@
 
   const REVERT_COPY_BUTTON_TIMEOUT = 10000;
 
+  function copyAddress(text) {
+    navigator.clipboard.writeText(text);
+  }
+
   function handleCopy(event) {
-    navigator.clipboard.writeText(popupData.addrToCopy);
+    copyAddress(popupData.addrToCopy);
     if (popupCopyButton !== null  &&  popupCopiedMessage !== null) {
       popupCopyButton.style.display = "none";
       popupCopiedMessage.style.display = "";
@@ -192,6 +196,10 @@
         popupCopiedMessage.style.display = "none";
       }, REVERT_COPY_BUTTON_TIMEOUT);
     }
+  }
+
+  function handleBallotpediaLookup(event) {
+    copyAddress(`${popupData.addrToCopy}, USA`);
   }
 
 </script>
@@ -251,6 +259,13 @@
           <strong>Phone:</strong> {popupData?.src_phone}<br>
           <strong>Email:</strong> <a href="mailto:{popupData?.src_email}">{popupData?.src_email}</a>
         </details>
+        <br>
+        <a
+          href="https://ballotpedia.org/Sample_Ballot_Lookup"
+          target="_blank"
+          rel="noreferrer"
+          onclick={handleBallotpediaLookup}
+        >Copy address and lookup ballot</a>
       </div>
     </Popup>
   </CircleLayer>
