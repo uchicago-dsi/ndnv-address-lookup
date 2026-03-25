@@ -20,6 +20,9 @@ OUTPUT_PATH = (
 OUTPUT_CSV_PATH = (
     Path(__file__).resolve().parent.parent / "public" / "polling-places-nodups.csv"
 )
+DROPBOXES_CSV_PATH = (
+    Path(__file__).resolve().parent.parent / "public" / "dropboxes.csv"
+)
 
 FIELD_NAMES = {
     "County": "county",
@@ -77,7 +80,7 @@ def build_source_url(eid: str) -> str:
     return f"https://vip.sos.nd.gov/Precincts.aspx?eid={eid}"
 
 
-def export_csv_bytes(source_url: str) -> bytes:
+def export_csv_bytes(source_url: str, tab_index: int) -> bytes:
     page_request = urllib.request.Request(
         source_url,
         headers={"User-Agent": "python-urllib"},
@@ -94,11 +97,13 @@ def export_csv_bytes(source_url: str) -> bytes:
         "__EVENTVALIDATION": get_hidden_input_value(page_html, "__EVENTVALIDATION"),
         "ctl00$ContentPlaceHolder1$btnExport": "Export to Excel",
         # These Telerik client-state fields reproduce selecting the
-        # "Statewide Polling Places" tab before exporting.
+        # requested tab before exporting.
         "ctl00_ContentPlaceHolder1_rtsPrecincts_ClientState": (
-            '{"selectedIndexes":["5"]}'
+            f'{{"selectedIndexes":["{tab_index}"]}}'
         ),
-        "ctl00_ContentPlaceHolder1_rmpPrecincts_ClientState": '{"selectedIndex":5}',
+        "ctl00_ContentPlaceHolder1_rmpPrecincts_ClientState": (
+            f'{{"selectedIndex":{tab_index}}}'
+        ),
     }
 
     export_request = urllib.request.Request(
@@ -133,6 +138,34 @@ def csv_bytes_to_table(csv_bytes: bytes) -> pa.Table:
     )
 
 
+def snake_case_column_name(name: str) -> str:
+    normalized = re.sub(r"[^A-Za-z0-9]+", "_", name.strip())
+    normalized = re.sub(r"([a-z0-9])([A-Z])", r"\1_\2", normalized)
+    normalized = re.sub(r"_+", "_", normalized).strip("_")
+    return normalized.lower()
+
+
+def write_csv_with_snake_case_headers(csv_bytes: bytes, output_path: Path) -> None:
+    csv_text = csv_bytes.decode("utf-8-sig")
+    reader = csv.DictReader(io.StringIO(csv_text))
+    if reader.fieldnames is None:
+        raise RuntimeError("Exported CSV is missing headers")
+
+    fieldnames = [snake_case_column_name(name) for name in reader.fieldnames]
+    with output_path.open("w", newline="", encoding="utf-8") as output_file:
+        writer = csv.DictWriter(output_file, fieldnames=fieldnames)
+        writer.writeheader()
+
+        for row in reader:
+            writer.writerow(
+                {
+                    snake_case_column_name(name): (value or "").strip()
+                    for name, value in row.items()
+                    if name is not None
+                }
+            )
+
+
 def write_slim_deduplicated_csv(table: pa.Table, output_path: Path) -> None:
     rows = zip(*(table.column(name).to_pylist() for name in SLIM_FIELD_NAMES), strict=True)
     seen: set[tuple[str, ...]] = set()
@@ -151,8 +184,9 @@ def write_slim_deduplicated_csv(table: pa.Table, output_path: Path) -> None:
 def main() -> int:
     args = parse_args()
     source_url = build_source_url(args.eid)
-    csv_bytes = export_csv_bytes(source_url)
-    table = csv_bytes_to_table(csv_bytes)
+    polling_places_csv_bytes = export_csv_bytes(source_url, tab_index=5)
+    table = csv_bytes_to_table(polling_places_csv_bytes)
+    dropboxes_csv_bytes = export_csv_bytes(source_url, tab_index=2)
     pq.write_table(
         table,
         OUTPUT_PATH,
@@ -160,8 +194,10 @@ def main() -> int:
         use_dictionary=list(table.schema.names),
     )
     write_slim_deduplicated_csv(table, OUTPUT_CSV_PATH)
+    write_csv_with_snake_case_headers(dropboxes_csv_bytes, DROPBOXES_CSV_PATH)
     print(f"Wrote {OUTPUT_PATH}")
     print(f"Wrote {OUTPUT_CSV_PATH}")
+    print(f"Wrote {DROPBOXES_CSV_PATH}")
     return 0
 
 

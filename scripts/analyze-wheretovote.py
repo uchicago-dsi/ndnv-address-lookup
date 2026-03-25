@@ -19,15 +19,16 @@ KEY_VALUE_PAIRS_PATH = (
     Path.home()
     / "Box/dsi-core/11th-hour/ndnv-address-lookup/where-to-vote-2026/fetch-WhereToVote/key-value-pairs.csv"
 )
+WHERE_TO_VOTE_DIR = Path("~/Box/dsi-core/11th-hour/ndnv-address-lookup/where-to-vote-2026").expanduser()
 ADDRESSES_PATH = Path("public/911-addresses.parquet")
 POLLING_PLACES_PATH = Path("public/polling-places.parquet")
 COUNTIES_PATH = Path("public/counties-exact.gpkg")
 DISTRICTS_PATH = Path("public/legislative-districts-exact.gpkg")
 
-WHERETOVOTE_POINTS_PATH = Path("wheretovote-points.gpkg")
-MISSING_POINTS_PATH = Path("missing-points.gpkg")
-POLLING_AREAS_PATH = Path("wheretovote-polling-areas.gpkg")
-LEGACY_PRECINCT_AREAS_PATH = Path("wheretovote-precinct-areas.gpkg")
+WHERETOVOTE_POINTS_PATH = WHERE_TO_VOTE_DIR / "wheretovote-points.gpkg"
+MISSING_POINTS_PATH = WHERE_TO_VOTE_DIR / "missing-points.gpkg"
+POLLING_AREAS_PATH = WHERE_TO_VOTE_DIR / "wheretovote-polling-areas.gpkg"
+LEGACY_PRECINCT_AREAS_PATH = WHERE_TO_VOTE_DIR / "wheretovote-precinct-areas.gpkg"
 
 VORONOI_CRS = "EPSG:5070"
 DEFAULT_MIN_ADDRESSES = 10
