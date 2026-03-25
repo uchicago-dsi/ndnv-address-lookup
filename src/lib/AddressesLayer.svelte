@@ -358,7 +358,7 @@
       }}
     beforeLayerType="symbol"
   >
-    <Popup>
+    <Popup closeButton={true}>
       <div style="margin-bottom: 10px;">
         <span class="popupCopyButton">
           <!-- always hidden, takes the focus so that the copy button doesn't -->
