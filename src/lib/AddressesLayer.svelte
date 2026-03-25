@@ -93,8 +93,8 @@
     return new Promise((onComplete) =>
       parquetRead({
         file: parquetFile,
-        //          0        1        2       3       4      5      6      7           8      9      10                11
-        columns: ["num", "street", "unit", "muni", "msag", "zip", "src", "district", "lon", "lat", "in_wheretovote", "polling_places"],
+        //          0        1        2       3       4      5      6      7           8      9      10                11               12
+        columns: ["num", "street", "unit", "muni", "msag", "zip", "src", "district", "lon", "lat", "in_wheretovote", "polling_places", "county_fp"],
         rowStart: regions[index].start,
         rowEnd: regions[index].stop,
         compressors,
@@ -120,6 +120,7 @@
           lat: row[9],
           in_wheretovote: row[10],
           polling_places: row[11],
+          county_fp: row[12],
         },
       }));
     });
@@ -244,6 +245,7 @@
       district: p.district?.trim?.() ?? "",
       lon: p.lon,
       lat: p.lat,
+      county_fp: p.county_fp,
       in_wheretovote: p.in_wheretovote,
       polling_places: p.polling_places,
       src_title: sourceList[p.src].title,

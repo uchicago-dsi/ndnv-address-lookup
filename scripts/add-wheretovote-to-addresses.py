@@ -11,6 +11,7 @@ import pyarrow.parquet as pq
 
 
 DEFAULT_INPUT_PATH = Path("public/911-addresses.parquet")
+DEFAULT_COUNTIES_PATH = Path("public/counties-exact.gpkg")
 DEFAULT_DISTRICTS_PATH = Path("public/legislative-districts-exact.gpkg")
 DEFAULT_POLLING_PLACES_PATH = Path("public/polling-places-nodups.csv")
 DEFAULT_WHERE_TO_VOTE_DIR = (
@@ -33,6 +34,7 @@ COLUMN_ENCODING = {
     "src": "PLAIN",
     "lon": "BYTE_STREAM_SPLIT",
     "lat": "BYTE_STREAM_SPLIT",
+    "county_fp": "PLAIN",
     "district": "PLAIN",
 }
 DICTIONARY_COLUMNS = ["polling_places"]
@@ -51,6 +53,12 @@ def parse_args() -> argparse.Namespace:
         type=Path,
         default=None,
         help="Output parquet file (defaults to overwriting the input)",
+    )
+    parser.add_argument(
+        "--counties",
+        type=Path,
+        default=DEFAULT_COUNTIES_PATH,
+        help="GeoPackage with county polygons and county_fp values",
     )
     parser.add_argument(
         "--districts",
@@ -108,6 +116,30 @@ def assign_districts(dataframe: pd.DataFrame, districts_path: Path) -> pd.DataFr
     dataframe["district"] = joined["district"].astype(str).str.strip().str.ljust(2, " ")
     if (dataframe["district"].str.len() != 2).any():
         raise RuntimeError("District values are not fixed-width after padding")
+    return dataframe
+
+
+def assign_county_fp(dataframe: pd.DataFrame, counties_path: Path) -> pd.DataFrame:
+    counties = gpd.read_file(counties_path)[["county_fp", "geometry"]]
+    points = gpd.GeoDataFrame(
+        dataframe[["lon", "lat"]].copy(),
+        geometry=gpd.points_from_xy(dataframe["lon"], dataframe["lat"]),
+        crs=counties.crs,
+    )
+    joined = gpd.sjoin(points, counties, how="left", predicate="within")
+
+    if joined.index.has_duplicates:
+        raise RuntimeError("County join produced duplicate address rows")
+    if joined["county_fp"].isna().any():
+        missing = int(joined["county_fp"].isna().sum())
+        raise RuntimeError(f"County join failed for {missing} addresses")
+
+    county_fp = pd.to_numeric(joined["county_fp"], errors="raise")
+    if ((county_fp < 0) | (county_fp > 255)).any():
+        raise RuntimeError("county_fp values are out of range for uint8")
+
+    dataframe = dataframe.copy()
+    dataframe["county_fp"] = county_fp.astype("uint8")
     return dataframe
 
 
@@ -252,6 +284,8 @@ def assign_wheretovote_fields(
 
 def build_output_schema(input_schema: pa.Schema) -> pa.Schema:
     fields = list(input_schema)
+    if "county_fp" not in input_schema.names:
+        fields.append(pa.field("county_fp", pa.uint8()))
     if "district" not in input_schema.names:
         fields.append(pa.field("district", pa.string()))
     if "in_wheretovote" not in input_schema.names:
@@ -296,6 +330,7 @@ def main() -> int:
     input_schema = parquet_file.schema_arrow
     row_group_sizes = get_row_group_sizes(input_path)
     dataframe = load_dataframe(input_path)
+    dataframe = assign_county_fp(dataframe, args.counties)
     dataframe = assign_districts(dataframe, args.districts)
     dataframe = assign_wheretovote_fields(
         dataframe,
@@ -308,6 +343,7 @@ def main() -> int:
     write_table_with_existing_layout(table, row_group_sizes, output_path)
 
     print(f"Loaded {len(dataframe)} rows from {input_path}")
+    print(f"Assigned county_fp from {args.counties}")
     print(f"Assigned districts from {args.districts}")
     print(f"Assigned WhereToVote fields from {args.wheretovote_points}")
     print(f"Assigned polling-area fields from {args.wheretovote_areas}")
