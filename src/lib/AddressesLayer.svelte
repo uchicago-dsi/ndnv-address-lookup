@@ -359,17 +359,6 @@
     beforeLayerType="symbol"
   >
     <Popup closeButton={true}>
-      <div style="margin-bottom: 10px;">
-        <span class="popupCopyButton">
-          <!-- always hidden, takes the focus so that the copy button doesn't -->
-          <button type="button" bind:this={popupAbsorbFocus} style="display: none;"></button>
-
-          <!-- the "copy" button and "copied" message toggle "display: none;" -->
-          <button type="button" bind:this={popupCopyButton} onclick={handleCopy}>Copy to Clipboard</button>
-          <span bind:this={popupCopiedMessage} style="display: none;">Copied!</span>
-
-        </span>
-      </div>
       <div style="color: black;">
         <strong>{popupData?.streetAddressHeader}:</strong> {popupData?.streetAddress}<br>
         <strong>{popupData?.cityHeader}:</strong> {popupData?.city}<br>
@@ -401,6 +390,17 @@
           rel="noreferrer"
           onclick={handleWhereToVoteLookup}
         >Copy number and go to WhereToVote</a>{@html list_polling_places(popupData)}
+        <br>
+      </div>
+      <div>
+        <span class="popupCopyButton">
+          <!-- always hidden, takes the focus so that the copy button doesn't -->
+          <button type="button" bind:this={popupAbsorbFocus} style="display: none;"></button>
+
+          <!-- the "copy" button and "copied" message toggle "display: none;" -->
+          <button type="button" bind:this={popupCopyButton} onclick={handleCopy}>Copy Address</button>
+          <span bind:this={popupCopiedMessage} style="display: none;">Copied!</span>
+        </span>
       </div>
     </Popup>
   </CircleLayer>
