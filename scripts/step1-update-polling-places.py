@@ -145,25 +145,40 @@ def snake_case_column_name(name: str) -> str:
     return normalized.lower()
 
 
+def county_number_to_county_fp(value: str) -> str:
+    county_number = int(value.strip())
+    return str(2 * county_number - 1)
+
+
 def write_csv_with_snake_case_headers(csv_bytes: bytes, output_path: Path) -> None:
     csv_text = csv_bytes.decode("utf-8-sig")
     reader = csv.DictReader(io.StringIO(csv_text))
     if reader.fieldnames is None:
         raise RuntimeError("Exported CSV is missing headers")
 
-    fieldnames = [snake_case_column_name(name) for name in reader.fieldnames]
+    fieldnames = []
+    for name in reader.fieldnames:
+        snake_name = snake_case_column_name(name)
+        if snake_name == "county_number":
+            snake_name = "county_fp"
+        fieldnames.append(snake_name)
+
     with output_path.open("w", newline="", encoding="utf-8") as output_file:
         writer = csv.DictWriter(output_file, fieldnames=fieldnames)
         writer.writeheader()
 
         for row in reader:
-            writer.writerow(
-                {
-                    snake_case_column_name(name): (value or "").strip()
-                    for name, value in row.items()
-                    if name is not None
-                }
-            )
+            output_row = {}
+            for name, value in row.items():
+                if name is None:
+                    continue
+                snake_name = snake_case_column_name(name)
+                cleaned_value = (value or "").strip()
+                if snake_name == "county_number":
+                    output_row["county_fp"] = county_number_to_county_fp(cleaned_value)
+                else:
+                    output_row[snake_name] = cleaned_value
+            writer.writerow(output_row)
 
 
 def write_slim_deduplicated_csv(table: pa.Table, output_path: Path) -> None:
