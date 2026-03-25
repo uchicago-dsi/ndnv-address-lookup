@@ -13,8 +13,10 @@
   let parquetFile = null;
   const url = new URL("/911-addresses.parquet", import.meta.url).href;
   const pollingPlacesUrl = new URL("/polling-places-nodups.csv", import.meta.url).href;
+  const dropboxesUrl = new URL("/dropboxes.csv", import.meta.url).href;
   const pollingPlaceLocationsUrl = new URL("/polling-places-locations.json", import.meta.url).href;
   let pollingPlaces = [];
+  let dropboxes = [];
   let pollingPlaceLocations = {};
 
   function parseCsv(text) {
@@ -210,6 +212,13 @@
       return;
     }
     pollingPlaces = parseCsv(await response.text());
+  });
+
+  fetch(dropboxesUrl).then(async response => {
+    if (!response.ok) {
+      return;
+    }
+    dropboxes = parseCsv(await response.text());
   });
 
   fetch(pollingPlaceLocationsUrl).then(async response => {
