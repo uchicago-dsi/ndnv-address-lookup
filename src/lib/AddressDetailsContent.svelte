@@ -65,7 +65,6 @@
       <details open={expandAllDetails} ontoggle={onDetailsToggle}>
         <summary><strong>{pollingPlacesSection.title}</strong></summary>
         {#each pollingPlacesSection.entries as place, i}
-          {#if i != 0}<br><br>{/if}
           {place.polling_location}<br>
           {#if place.url !== null}
             <a href={place.url} target="_blank" rel="noreferrer">{place.addressLine}</a>
@@ -74,12 +73,12 @@
           {/if}
           <br>
           ({place.polling_hours}, {place.county_auditor_phone})
+          <br><br>
         {/each}
       </details>
     {/if}
 
     {#if dropboxEntries.length != 0}
-      <br>
       <details open={expandAllDetails} ontoggle={onDetailsToggle}>
         <summary><strong>County Dropboxes</strong></summary>
         {#each dropboxEntries as dropbox, i}
@@ -139,7 +138,7 @@
     display: inline-flex;
     justify-content: center;
     width: 100%;
-    margin-top: 12px;
+    margin-top: 24px;
   }
 
   .popupCopyButton button {
