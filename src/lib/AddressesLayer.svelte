@@ -15,9 +15,11 @@
   const pollingPlacesUrl = new URL("/polling-places-nodups.csv", import.meta.url).href;
   const dropboxesUrl = new URL("/dropboxes.csv", import.meta.url).href;
   const pollingPlaceLocationsUrl = new URL("/polling-places-locations.json", import.meta.url).href;
+  const dropboxLocationsUrl = new URL("/dropboxes-locations.json", import.meta.url).href;
   let pollingPlaces = [];
   let dropboxes = [];
   let pollingPlaceLocations = {};
+  let dropboxLocations = {};
 
   function parseCsv(text) {
     let rows = [];
@@ -228,6 +230,13 @@
     pollingPlaceLocations = await response.json();
   });
 
+  fetch(dropboxLocationsUrl).then(async response => {
+    if (!response.ok) {
+      return;
+    }
+    dropboxLocations = await response.json();
+  });
+
   function mouseEnter(event) {
     event.map.getCanvas().style.cursor = "pointer";
   }
@@ -328,11 +337,73 @@
       .join("<br><br>");
 
     if (popupData?.in_wheretovote) {
-      return `<br><br><details><summary><strong>Polling Places (from WhereToVote)</strong></summary>${rows}</details>`;
+      return `<br><details><summary><strong>Polling Places (from WhereToVote)</strong></summary>${rows}<br><br></details>`;
     }
     else {
-      return `<br><br><details><summary><strong>Polling Places (inferred from location)</strong></summary>${rows}</details>`;
+      return `<br><details><summary><strong>Polling Places (inferred from location)</strong></summary>${rows}<br><br></details>`;
     }
+  }
+
+  function insert_break_near(text, targetLength) {
+    if (text.length <= targetLength) {
+      return text;
+    }
+
+    let bestIndex = -1;
+    let bestDistance = Infinity;
+    for (let i = 0;  i < text.length;  i++) {
+      if (text[i] != " ") {
+        continue;
+      }
+      const distance = Math.abs(i - targetLength);
+      if (distance < bestDistance) {
+        bestDistance = distance;
+        bestIndex = i;
+      }
+    }
+
+    if (bestIndex == -1) {
+      return text;
+    }
+
+    return text.slice(0, bestIndex) + "<br>" + text.slice(bestIndex + 1);
+  }
+
+  function list_dropboxes(popupData) {
+    const countyFp = Number(popupData?.county_fp);
+    if (!Number.isFinite(countyFp)) {
+      return "";
+    }
+
+    const origin = `${popupData?.lat},${popupData?.lon}`;
+    const rows = dropboxes
+      .filter(dropbox => Number(dropbox.county_fp) == countyFp)
+      .map(dropbox => {
+        const coordinates = dropboxLocations[dropbox.polling_location];
+        const destination = Array.isArray(coordinates)  &&  coordinates.length == 2
+          ? `${coordinates[1]},${coordinates[0]}`
+          : null;
+        const addressLine = `${dropbox.address}, ${dropbox.city} ${dropbox.zip_code}`;
+        const hoursLine = insert_break_near(dropbox.polling_hours, 40);
+
+        let linkedAddressLine = addressLine;
+        if (destination !== null) {
+          const url = "https://www.google.com/maps/dir/?api=1"
+            + `&origin=${encodeURIComponent(origin)}`
+            + `&destination=${encodeURIComponent(destination)}`
+            + "&travelmode=driving";
+          linkedAddressLine = `<a href="${url}" target="_blank" rel="noreferrer">${addressLine}</a>`;
+        }
+
+        return `${dropbox.polling_location}<br>${linkedAddressLine}<br>${hoursLine}<br>Auditor Phone: ${dropbox.county_auditor_phone}`;
+      })
+      .join("<br><br>");
+
+    if (rows == "") {
+      return "";
+    }
+
+    return `<details><summary><strong>County Dropbox</strong></summary>${rows}</details>`;
   }
 
 </script>
@@ -371,6 +442,7 @@
   >
     <Popup closeButton={true}>
       <div style="color: black;">
+        <strong style="text-decoration: underline;">Address:</strong><br>
         <strong>{popupData?.streetAddressHeader}:</strong> {popupData?.streetAddress}<br>
         <strong>{popupData?.cityHeader}:</strong> {popupData?.city}<br>
         <strong>Zip code:</strong> {popupData?.zip}<br>
@@ -382,6 +454,7 @@
           <strong>Email:</strong> <a href="mailto:{popupData?.src_email}">{popupData?.src_email}</a>
         </details>
         <br>
+        <strong style="text-decoration: underline;">Voter Information:</strong><br>
         <a
           href="https://ndlegis.gov/districts/2025-2032/district-{popupData.district.replace(/[AB]$/, '')}"
           target="_blank"
@@ -400,7 +473,7 @@
           target="_blank"
           rel="noreferrer"
           onclick={handleWhereToVoteLookup}
-        >Copy number and go to WhereToVote</a>{@html list_polling_places(popupData)}
+        >Copy number and go to WhereToVote</a>{@html list_polling_places(popupData)}{@html list_dropboxes(popupData)}
         <br>
       </div>
       <div>
