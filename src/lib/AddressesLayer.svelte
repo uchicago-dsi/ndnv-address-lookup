@@ -1,6 +1,8 @@
 <script>
+  import { onDestroy, tick } from 'svelte';
   import { getMapContext, GeoJSON, CircleLayer, Popup } from 'svelte-maplibre';
 
+  import AddressDetailsContent from './AddressDetailsContent.svelte';
   import sourceList from "../data/source-list.json";
   import { parquetMetadata, parquetRead } from "hyparquet";
   import { compressors } from "hyparquet-compressors";
@@ -246,11 +248,83 @@
   }
 
   let popupData = $state(null);
-  let popupAbsorbFocus = null;
-  let popupCopyButton = null;
-  let popupCopiedMessage = null;
+  let popupLngLat = $state(undefined);
+  let popupOpen = $state(false);
+  let dialogOpen = $state(false);
+  let copied = $state(false);
+  let popupContentElement = $state(null);
+  let popupMeasurementElement = $state(null);
+  let copyFeedbackTimeout = $state(null);
+  let dialogElement = $state(null);
+  let dialogSurfaceElement = $state(null);
+  let openingAddressDetails = $state(false);
+  let suppressNextPopupClose = false;
 
-  function handleClick(event) {
+  const REVERT_COPY_BUTTON_TIMEOUT = 10000;
+  const POPUP_VIEWPORT_MARGIN = 32;
+
+  function clearCopyFeedbackTimeout() {
+    if (copyFeedbackTimeout !== null) {
+      clearTimeout(copyFeedbackTimeout);
+      copyFeedbackTimeout = null;
+    }
+  }
+
+  function resetCopyFeedback() {
+    clearCopyFeedbackTimeout();
+    copied = false;
+  }
+
+  onDestroy(() => {
+    clearCopyFeedbackTimeout();
+  });
+
+  function closeAddressDetails() {
+    if (dialogElement !== null  &&  dialogElement.open) {
+      dialogElement.close();
+    }
+    openingAddressDetails = false;
+    popupData = null;
+    popupLngLat = undefined;
+    popupOpen = false;
+    dialogOpen = false;
+    suppressNextPopupClose = false;
+    resetCopyFeedback();
+  }
+
+  function expandedPopupWouldOverflowViewport() {
+    if (popupMeasurementElement === null) {
+      return false;
+    }
+    return popupMeasurementElement.getBoundingClientRect().height > window.innerHeight - POPUP_VIEWPORT_MARGIN;
+  }
+
+  async function decideHowToOpenAddressDetails() {
+    await tick();
+    await new Promise(resolve => requestAnimationFrame(resolve));
+
+    const useDialog = expandedPopupWouldOverflowViewport();
+    dialogOpen = useDialog;
+    popupOpen = !useDialog;
+    openingAddressDetails = false;
+  }
+
+  function handlePopupClose() {
+    if (suppressNextPopupClose) {
+      suppressNextPopupClose = false;
+      return;
+    }
+    closeAddressDetails();
+  }
+
+  function handleDialogCancel(event) {
+    event.preventDefault();
+    closeAddressDetails();
+  }
+
+  function handleDetailsToggle() {}
+
+  async function handleClick(event) {
     let p = event.features[0].properties;
     let isMuni = p.muni != "Unincorporated"  &&  p.muni != "Undefined";
     let unit = p.unit == "" ? "" : ` (${p.unit})`;
@@ -272,14 +346,14 @@
       src_email: sourceList[p.src].email
     };
     popupData.addrToCopy = `${popupData.streetAddress}, ${popupData.city}, ND, ${popupData.zip}`;
-
-    if (popupCopyButton !== null  &&  popupCopiedMessage !== null) {
-      popupCopyButton.style.display = "";
-      popupCopiedMessage.style.display = "none";
-    }
+    popupLngLat = [p.lon, p.lat];
+    dialogOpen = false;
+    popupOpen = false;
+    openingAddressDetails = true;
+    suppressNextPopupClose = false;
+    resetCopyFeedback();
+    await decideHowToOpenAddressDetails();
   }
-
-  const REVERT_COPY_BUTTON_TIMEOUT = 10000;
 
   function copyAddress(text) {
     navigator.clipboard.writeText(text);
@@ -287,14 +361,12 @@
 
   function handleCopy(event) {
     copyAddress(popupData.addrToCopy);
-    if (popupCopyButton !== null  &&  popupCopiedMessage !== null) {
-      popupCopyButton.style.display = "none";
-      popupCopiedMessage.style.display = "";
-      setTimeout(() => {
-        popupCopyButton.style.display = "";
-        popupCopiedMessage.style.display = "none";
-      }, REVERT_COPY_BUTTON_TIMEOUT);
-    }
+    clearCopyFeedbackTimeout();
+    copied = true;
+    copyFeedbackTimeout = setTimeout(() => {
+      copied = false;
+      copyFeedbackTimeout = null;
+    }, REVERT_COPY_BUTTON_TIMEOUT);
   }
 
   function handleBallotpediaLookup(event) {
@@ -306,42 +378,50 @@
     copyAddress(houseNumber);
   }
 
-  function list_polling_places(popupData) {
+  function getDirectionsUrl(origin, coordinates) {
+    if (!(Array.isArray(coordinates)  &&  coordinates.length == 2)) {
+      return null;
+    }
+
+    const destination = `${coordinates[1]},${coordinates[0]}`;
+    return "https://www.google.com/maps/dir/?api=1"
+      + `&origin=${encodeURIComponent(origin)}`
+      + `&destination=${encodeURIComponent(destination)}`
+      + "&travelmode=driving";
+  }
+
+  function getPollingPlacesSection(popupData) {
     if (popupData?.polling_places == "") {
-      return "";
+      return null;
     }
 
     const origin = `${popupData?.lat},${popupData?.lon}`;
-    let rows = popupData.polling_places
+    const entries = popupData.polling_places
       .split(" ")
       .map(x => Number(x))
       .filter(x => Number.isInteger(x)  &&  x >= 0  &&  x < pollingPlaces.length)
       .map(x => pollingPlaces[x])
       .map(place => {
         const coordinates = pollingPlaceLocations[place.polling_location];
-        const destination = Array.isArray(coordinates)  &&  coordinates.length == 2
-          ? `${coordinates[1]},${coordinates[0]}`
-          : null;
-        const addressLine = `${place.address}, ${place.city} ${place.zip_code}`;
+        return {
+          polling_location: place.polling_location,
+          addressLine: `${place.address}, ${place.city} ${place.zip_code}`,
+          polling_hours: place.polling_hours,
+          county_auditor_phone: place.county_auditor_phone,
+          url: getDirectionsUrl(origin, coordinates),
+        };
+      });
 
-        if (destination === null) {
-          return `${place.polling_location}<br>${addressLine}<br>(${place.polling_hours}, ${place.county_auditor_phone})`;
-        }
-
-        const url = "https://www.google.com/maps/dir/?api=1"
-          + `&origin=${encodeURIComponent(origin)}`
-          + `&destination=${encodeURIComponent(destination)}`
-          + "&travelmode=driving";
-        return `${place.polling_location}<br><a href="${url}" target="_blank" rel="noreferrer">${addressLine}</a><br>(${place.polling_hours}, ${place.county_auditor_phone})`;
-      })
-      .join("<br><br>");
-
-    if (popupData?.in_wheretovote) {
-      return `<br><details><summary><strong>Polling Places (from WhereToVote)</strong></summary>${rows}<br><br></details>`;
+    if (entries.length == 0) {
+      return null;
     }
-    else {
-      return `<br><details><summary><strong>Polling Places (inferred from location)</strong></summary>${rows}<br><br></details>`;
-    }
+
+    return {
+      title: popupData?.in_wheretovote
+        ? "Polling Places (from WhereToVote)"
+        : "Polling Places (inferred from location)",
+      entries,
+    };
   }
 
   function insert_break_near(text, targetLength) {
@@ -369,42 +449,52 @@
     return text.slice(0, bestIndex) + "<br>" + text.slice(bestIndex + 1);
   }
 
-  function list_dropboxes(popupData) {
+  function getDropboxEntries(popupData) {
     const countyFp = Number(popupData?.county_fp);
     if (!Number.isFinite(countyFp)) {
-      return "";
+      return [];
     }
 
     const origin = `${popupData?.lat},${popupData?.lon}`;
-    const rows = dropboxes
+    return dropboxes
       .filter(dropbox => Number(dropbox.county_fp) == countyFp)
       .map(dropbox => {
         const coordinates = dropboxLocations[dropbox.polling_location];
-        const destination = Array.isArray(coordinates)  &&  coordinates.length == 2
-          ? `${coordinates[1]},${coordinates[0]}`
-          : null;
-        const addressLine = `${dropbox.address}, ${dropbox.city} ${dropbox.zip_code}`;
-        const hoursLine = insert_break_near(dropbox.polling_hours, 40);
+        return {
+          polling_location: dropbox.polling_location,
+          addressLine: `${dropbox.address}, ${dropbox.city} ${dropbox.zip_code}`,
+          polling_hours_html: insert_break_near(dropbox.polling_hours, 40),
+          county_auditor_phone: dropbox.county_auditor_phone,
+          url: getDirectionsUrl(origin, coordinates),
+        };
+      });
+  }
 
-        let linkedAddressLine = addressLine;
-        if (destination !== null) {
-          const url = "https://www.google.com/maps/dir/?api=1"
-            + `&origin=${encodeURIComponent(origin)}`
-            + `&destination=${encodeURIComponent(destination)}`
-            + "&travelmode=driving";
-          linkedAddressLine = `<a href="${url}" target="_blank" rel="noreferrer">${addressLine}</a>`;
-        }
+  $effect(() => {
+    if (!popupOpen  &&  !dialogOpen  &&  !openingAddressDetails  &&  popupData !== null) {
+      popupData = null;
+      popupLngLat = undefined;
+      resetCopyFeedback();
+    }
+  });
 
-        return `${dropbox.polling_location}<br>${linkedAddressLine}<br>${hoursLine}<br>Auditor Phone: ${dropbox.county_auditor_phone}`;
-      })
-      .join("<br><br>");
-
-    if (rows == "") {
-      return "";
+  $effect(() => {
+    if (dialogElement === null) {
+      return;
     }
 
-    return `<details><summary><strong>County Dropbox</strong></summary>${rows}</details>`;
-  }
+    if (dialogOpen) {
+      if (!dialogElement.open) {
+        dialogElement.showModal();
+        requestAnimationFrame(() => {
+          dialogSurfaceElement?.focus();
+        });
+      }
+    }
+    else if (dialogElement.open) {
+      dialogElement.close();
+    }
+  });
 
 </script>
 
@@ -439,74 +529,114 @@
         }
       }}
     beforeLayerType="symbol"
-  >
-    <Popup closeButton={true}>
-      <div style="color: black;">
-        <strong style="text-decoration: underline;">Address:</strong><br>
-        <strong>{popupData?.streetAddressHeader}:</strong> {popupData?.streetAddress}<br>
-        <strong>{popupData?.cityHeader}:</strong> {popupData?.city}<br>
-        <strong>Zip code:</strong> {popupData?.zip}<br>
-          <details>
-          <summary><strong>Source</strong></summary>
-          <strong>{popupData?.src_title}</strong><br>
-          <strong>Name:</strong> {popupData?.src_name}<br>
-          <strong>Phone:</strong> {popupData?.src_phone}<br>
-          <strong>Email:</strong> <a href="mailto:{popupData?.src_email}">{popupData?.src_email}</a>
-        </details>
-        <br>
-        <strong style="text-decoration: underline;">Voter Information:</strong><br>
-        <a
-          href="https://ndlegis.gov/districts/2025-2032/district-{popupData.district.replace(/[AB]$/, '')}"
-          target="_blank"
-          rel="noreferrer"
-        >Legislative District {popupData.district}</a>
-        <br>
-        <a
-          href="https://ballotpedia.org/Sample_Ballot_Lookup"
-          target="_blank"
-          rel="noreferrer"
-          onclick={handleBallotpediaLookup}
-        >Copy address and go to Ballotpedia</a>
-        <br>
-        <a
-          href="https://vip.sos.nd.gov/WhereToVote.aspx"
-          target="_blank"
-          rel="noreferrer"
-          onclick={handleWhereToVoteLookup}
-        >Copy number and go to WhereToVote</a>{@html list_polling_places(popupData)}{@html list_dropboxes(popupData)}
-        <br>
-      </div>
-      <div>
-        <span class="popupCopyButton">
-          <!-- always hidden, takes the focus so that the copy button doesn't -->
-          <button type="button" bind:this={popupAbsorbFocus} style="display: none;"></button>
-
-          <!-- the "copy" button and "copied" message toggle "display: none;" -->
-          <button type="button" bind:this={popupCopyButton} onclick={handleCopy}>Copy Address</button>
-          <span bind:this={popupCopiedMessage} style="display: none;">Copied!</span>
-        </span>
-      </div>
-    </Popup>
-  </CircleLayer>
+  />
 </GeoJSON>
 
+<Popup
+  closeButton={true}
+  openOn="manual"
+  bind:open={popupOpen}
+  bind:lngLat={popupLngLat}
+  onclose={handlePopupClose}
+>
+  {#if popupData !== null}
+    <div bind:this={popupContentElement}>
+      <AddressDetailsContent
+        {popupData}
+        pollingPlacesSection={getPollingPlacesSection(popupData)}
+        dropboxEntries={getDropboxEntries(popupData)}
+        {copied}
+        onCopy={handleCopy}
+        onBallotpediaLookup={handleBallotpediaLookup}
+        onWhereToVoteLookup={handleWhereToVoteLookup}
+        onDetailsToggle={handleDetailsToggle}
+      />
+    </div>
+  {/if}
+</Popup>
+
+<dialog
+  bind:this={dialogElement}
+  class="addressDialog"
+  oncancel={handleDialogCancel}
+  onclick={(event) => {
+    if (event.target === dialogElement) {
+      closeAddressDetails();
+    }
+  }}
+>
+  {#if dialogOpen && popupData !== null}
+    <div class="addressDialogSurface" bind:this={dialogSurfaceElement} tabindex="-1">
+      <AddressDetailsContent
+        {popupData}
+        pollingPlacesSection={getPollingPlacesSection(popupData)}
+        dropboxEntries={getDropboxEntries(popupData)}
+        {copied}
+        onCopy={handleCopy}
+        onBallotpediaLookup={handleBallotpediaLookup}
+        onWhereToVoteLookup={handleWhereToVoteLookup}
+        onDetailsToggle={handleDetailsToggle}
+        showClose={true}
+        onClose={closeAddressDetails}
+      />
+    </div>
+  {/if}
+</dialog>
+
+{#if popupData !== null}
+  <div class="popupMeasurementShell">
+    <div class="popupMeasurementContent" bind:this={popupMeasurementElement}>
+      <AddressDetailsContent
+        {popupData}
+        pollingPlacesSection={getPollingPlacesSection(popupData)}
+        dropboxEntries={getDropboxEntries(popupData)}
+        {copied}
+        onCopy={handleCopy}
+        onBallotpediaLookup={handleBallotpediaLookup}
+        onWhereToVoteLookup={handleWhereToVoteLookup}
+        onDetailsToggle={handleDetailsToggle}
+        expandAllDetails={true}
+      />
+    </div>
+  </div>
+{/if}
+
 <style>
-  .popupCopyButton {
-    display: inline-flex;
-    justify-content: center;
-    width: 100%;
+  .popupMeasurementShell {
+    position: fixed;
+    top: 0;
+    left: -10000px;
+    visibility: hidden;
+    pointer-events: none;
   }
-  :global(.popupCopyButton button) {
-    border: 1px solid #808080;
-    background: #f0f0f0;
-    color: black;
-    font-weight: bold;
-  }
-  :global(.popupCopyButton span) {
-    margin-top: 6px;
-    margin-bottom: 5px;
+
+  .popupMeasurementContent {
+    width: 240px;
+    padding: 15px 10px;
+    box-sizing: border-box;
     background: white;
-    color: black;
-    font-weight: bold;
+  }
+
+  .addressDialog {
+    padding: 0;
+    border: 0;
+    background: transparent;
+    max-width: none;
+    max-height: none;
+  }
+
+  .addressDialogSurface {
+    max-width: min(560px, calc(100vw - 24px));
+    max-height: calc(100vh - 24px);
+    overflow-y: auto;
+    padding: 12px 14px;
+    border: 1px solid #808080;
+    border-radius: 12px;
+    background: white;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.35);
+  }
+
+  .addressDialog::backdrop {
+    background: rgba(0, 0, 0, 0.25);
   }
 </style>
