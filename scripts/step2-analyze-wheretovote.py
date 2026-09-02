@@ -29,6 +29,7 @@ WHERETOVOTE_POINTS_PATH = WHERE_TO_VOTE_DIR / "wheretovote-points.gpkg"
 MISSING_POINTS_PATH = WHERE_TO_VOTE_DIR / "missing-points.gpkg"
 POLLING_AREAS_PATH = WHERE_TO_VOTE_DIR / "wheretovote-polling-areas.gpkg"
 LEGACY_PRECINCT_AREAS_PATH = WHERE_TO_VOTE_DIR / "wheretovote-precinct-areas.gpkg"
+SUPPLEMENT_PATH = Path(__file__).resolve().parent / "precincts-supplement.json"
 
 VORONOI_CRS = "EPSG:5070"
 DEFAULT_MIN_ADDRESSES = 10
@@ -130,9 +131,9 @@ def stable_color(text: str) -> str:
     return f"#ff{rrggbb:06x}"
 
 
-def read_key_value_pairs() -> pd.DataFrame:
+def read_key_value_pairs(path: Path = KEY_VALUE_PAIRS_PATH) -> pd.DataFrame:
     df = pd.read_csv(
-        KEY_VALUE_PAIRS_PATH,
+        path,
         dtype=str,
         usecols=["index", "num", "zip", "street", "result"],
         keep_default_na=False,
@@ -563,7 +564,26 @@ def build_wheretovote(
     return wheretovote, missing
 
 
-def build_polling_fields(wheretovote: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
+def load_counties_without_polling_places(path: Path) -> set[str]:
+    """Counties the SOS has confirmed have no polling places established yet.
+
+    Addresses in these counties are moved to missing-points instead of aborting the
+    run, so the app makes no polling-place claim for them -- which is what
+    WhereToVote itself says. Any OTHER unmatched precinct is still a hard failure,
+    because the usual cause is a broken join, not a county decision.
+    """
+    if not path.exists():
+        return set()
+    data = json.loads(path.read_text())
+    return {
+        entry["county"] for entry in data.get("counties_without_polling_places", [])
+    }
+
+
+def build_polling_fields(
+    wheretovote: gpd.GeoDataFrame,
+    counties_without_polling_places: set[str] = frozenset(),
+) -> gpd.GeoDataFrame:
     polling = pq.read_table(POLLING_PLACES_PATH).to_pandas()[POLLING_FIELDS].copy()
     polling["county_key"] = polling["county_number"].astype(str).str.zfill(2)
     polling["district_key"] = polling["legislative_district"].astype(str).str.zfill(2)
@@ -639,17 +659,37 @@ def build_polling_fields(wheretovote: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
             wheretovote["precinct_key"],
         )
     )
-    missing_keys = [key for key in key_tuples if key not in polling_by_key]
-    if missing_keys:
-        missing_key = missing_keys[0]
-        row = wheretovote.loc[
-            (wheretovote["county_key"] == missing_key[0])
-            & (wheretovote["district_key"] == missing_key[1])
-            & (wheretovote["precinct_key"] == missing_key[2])
-        ].iloc[0]
-        fail(
-            "no polling-places match for county/district/precinct key",
-            wheretovote_row=row.drop(labels=["geometry"]).to_dict(),
+    unmatched = pd.Series(
+        [key not in polling_by_key for key in key_tuples], index=wheretovote.index
+    )
+    if unmatched.any():
+        excused = unmatched & wheretovote["county"].isin(
+            counties_without_polling_places
+        )
+        for county, count in (
+            wheretovote.loc[excused, "county"].value_counts().items()
+        ):
+            print(
+                f"NO POLLING PLACE: dropping {count:,} {county} County address(es) -- "
+                f"the county has not established polling places for this election "
+                f"(see scripts/precincts-supplement.json). The app will show no "
+                f"polling place for them.",
+                file=sys.stderr,
+            )
+        still_bad = unmatched & ~excused
+        if still_bad.any():
+            row = wheretovote.loc[still_bad].iloc[0]
+            fail(
+                "no polling-places match for county/district/precinct key",
+                wheretovote_row=row.drop(labels=["geometry"]).to_dict(),
+            )
+        wheretovote = wheretovote.loc[~excused].copy()
+        key_tuples = list(
+            zip(
+                wheretovote["county_key"],
+                wheretovote["district_key"],
+                wheretovote["precinct_key"],
+            )
         )
 
     for key in set(key_tuples):
@@ -811,6 +851,15 @@ def write_gpkg(gdf: gpd.GeoDataFrame, path: Path) -> None:
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
     parser.add_argument(
+        "--key-value-pairs",
+        type=Path,
+        default=KEY_VALUE_PAIRS_PATH,
+        help="Scraped WhereToVote answers. After rebuilding "
+             "public/911-addresses.parquet, pass the output of "
+             "scripts/rekey-wheretovote-scrape.py instead of the original: the "
+             "'index' column is a row position and every position shifts on rebuild.",
+    )
+    parser.add_argument(
         "--min-addresses",
         type=int,
         default=DEFAULT_MIN_ADDRESSES,
@@ -824,7 +873,7 @@ def parse_args() -> argparse.Namespace:
 
 def main() -> int:
     args = parse_args()
-    key_value_pairs = read_key_value_pairs()
+    key_value_pairs = read_key_value_pairs(args.key_value_pairs)
     addresses = read_addresses()
     counties = gpd.read_file(COUNTIES_PATH)
     districts = gpd.read_file(DISTRICTS_PATH)
@@ -836,7 +885,9 @@ def main() -> int:
         address_index,
         counties,
     )
-    wheretovote = build_polling_fields(wheretovote)
+    wheretovote = build_polling_fields(
+        wheretovote, load_counties_without_polling_places(SUPPLEMENT_PATH)
+    )
 
     write_gpkg(wheretovote, WHERETOVOTE_POINTS_PATH)
     write_gpkg(missing, MISSING_POINTS_PATH)

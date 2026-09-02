@@ -3,6 +3,9 @@
   import { getMapContext, GeoJSON, CircleLayer, Popup } from 'svelte-maplibre';
 
   import AddressDetailsContent from './AddressDetailsContent.svelte';
+  import SiouxCountyDetailsContent from './SiouxCountyDetailsContent.svelte';
+  import { getDirectionsUrl } from './directions.js';
+  import { buildSiouxCountyData } from './siouxCounty.js';
   import sourceList from "../data/source-list.json";
   import { parquetMetadata, parquetRead } from "hyparquet";
   import { compressors } from "hyparquet-compressors";
@@ -18,10 +21,16 @@
   const dropboxesUrl = new URL("/dropboxes.csv", import.meta.url).href;
   const pollingPlaceLocationsUrl = new URL("/polling-places-locations.json", import.meta.url).href;
   const dropboxLocationsUrl = new URL("/dropboxes-locations.json", import.meta.url).href;
+  const earlyVotingUrl = new URL("/early-voting.csv", import.meta.url).href;
+  const earlyVotingLocationsUrl = new URL("/early-voting-locations.json", import.meta.url).href;
   let pollingPlaces = [];
   let dropboxes = [];
+  /** @type {any[]} */
+  let earlyVoting = [];
   let pollingPlaceLocations = {};
   let dropboxLocations = {};
+  /** @type {Record<string, number[]>} */
+  let earlyVotingLocations = {};
 
   function parseCsv(text) {
     let rows = [];
@@ -239,6 +248,20 @@
     dropboxLocations = await response.json();
   });
 
+  fetch(earlyVotingUrl).then(async response => {
+    if (!response.ok) {
+      return;
+    }
+    earlyVoting = parseCsv(await response.text());
+  });
+
+  fetch(earlyVotingLocationsUrl).then(async response => {
+    if (!response.ok) {
+      return;
+    }
+    earlyVotingLocations = await response.json();
+  });
+
   function mouseEnter(event) {
     event.map.getCanvas().style.cursor = "pointer";
   }
@@ -378,18 +401,6 @@
     copyAddress(houseNumber);
   }
 
-  function getDirectionsUrl(origin, coordinates) {
-    if (!(Array.isArray(coordinates)  &&  coordinates.length == 2)) {
-      return null;
-    }
-
-    const destination = `${coordinates[1]},${coordinates[0]}`;
-    return "https://www.google.com/maps/dir/?api=1"
-      + `&origin=${encodeURIComponent(origin)}`
-      + `&destination=${encodeURIComponent(destination)}`
-      + "&travelmode=driving";
-  }
-
   function getPollingPlacesSection(popupData) {
     if (popupData?.polling_places == "") {
       return null;
@@ -470,11 +481,156 @@
       });
   }
 
+  // Early voting is keyed by county, exactly like dropboxes (unlike polling places,
+  // which are looked up by row index from the Parquet's polling_places column).
+  //
+  // The Secretary of State uses this tab for two different things: statutory early
+  // voting (with a Date/Times list) and one-off "Absentee Voting Day" events, which
+  // carry their dates in the comments field instead. Both are rendered verbatim in
+  // the state's own words rather than relabelled, because getting that wrong could
+  // send someone to a closed building. See docs/known-gaps.md.
+  /** @param {any} popupData */
+  function getEarlyVotingEntries(popupData) {
+    const countyFp = Number(popupData?.county_fp);
+    if (!Number.isFinite(countyFp)) {
+      return [];
+    }
+
+    const origin = `${popupData?.lat},${popupData?.lon}`;
+    return earlyVoting
+      .filter(entry => Number(entry.county_fp) == countyFp)
+      .map(entry => {
+        const coordinates = earlyVotingLocations[entry.early_voting_location];
+        return {
+          early_voting_location: entry.early_voting_location,
+          addressLine: `${entry.address}, ${entry.city} ${entry.zip_code}`,
+          early_voting_times: entry.early_voting_times,
+          comments: entry.comments,
+          url: getDirectionsUrl(origin, coordinates),
+        };
+      });
+  }
+
   $effect(() => {
     if (!popupOpen  &&  !dialogOpen  &&  !openingAddressDetails  &&  popupData !== null) {
       popupData = null;
       popupLngLat = undefined;
       resetCopyFeedback();
+    }
+  });
+
+  // ---- Sioux County fallback -------------------------------------------------
+  // Sioux County has no 911 address points at all, so there is no dot to click.
+  // A transparent fill layer over the county (see src/data/map-style.json) makes
+  // the whole county tappable instead.
+  const SIOUX_FILL_LAYER = "sioux-fallback-fill";
+  // A modal opened on tap 1 would be dismissed by tap 2 of a double-tap-to-zoom,
+  // which looks like nothing happening at all.
+  const SIOUX_REOPEN_GUARD_MS = 400;
+
+  /** @type {any} */
+  let siouxData = $state(null);
+  let siouxDialogOpen = $state(false);
+  /** @type {any} */
+  let siouxDialogElement = $state(null);
+  /** @type {any} */
+  let siouxSurfaceElement = $state(null);
+  let siouxOpenedAt = 0;
+
+  function closeSiouxDetails() {
+    siouxDialogOpen = false;
+    siouxData = null;
+  }
+
+  /** @param {any} event */
+  function handleSiouxClick(event) {
+    // Never steal a click meant for an address dot. Sioux has none today, but
+    // maplibre fires every matching layer listener with no top-most-wins rule,
+    // and this keeps the two features compatible if Sioux addresses ever appear.
+    if (map.getLayer("address-circles")) {
+      const hits = map.queryRenderedFeatures(event.point, { layers: ["address-circles"] });
+      if (hits.length != 0) {
+        return;
+      }
+    }
+    if (siouxDialogOpen  &&  Date.now() - siouxOpenedAt < SIOUX_REOPEN_GUARD_MS) {
+      return;
+    }
+
+    openSiouxDetails(event.lngLat);
+  }
+
+  /** @param {{lng: number, lat: number}} lngLat */
+  function openSiouxDetails(lngLat) {
+    closeAddressDetails();
+    siouxData = buildSiouxCountyData(lngLat, {
+      pollingPlaces,
+      pollingPlaceLocations,
+      dropboxes,
+      dropboxLocations,
+      earlyVoting,
+      earlyVotingLocations,
+      sourceList,
+    });
+    siouxOpenedAt = Date.now();
+    siouxDialogOpen = true;
+  }
+
+  function siouxCursorOn() {
+    map.getCanvas().style.cursor = "pointer";
+  }
+
+  function siouxCursorOff() {
+    map.getCanvas().style.cursor = "";
+  }
+
+  $effect(() => {
+    // Only `loaded` is reactive. Do NOT also gate on map.getLayer(): if this effect
+    // happens to run before the style's counties layers exist, the guard would bail
+    // and never retry, silently leaving the county untappable. maplibre resolves the
+    // layer at dispatch time, so registering early is fine.
+    if (!loaded) {
+      return;
+    }
+    // Not the shared mouseEnter/mouseLeave: those read event.map, which only
+    // exists on svelte-maplibre's synthetic layer events, not raw maplibre ones.
+    map.on("click", SIOUX_FILL_LAYER, handleSiouxClick);
+    map.on("mouseenter", SIOUX_FILL_LAYER, siouxCursorOn);
+    map.on("mouseleave", SIOUX_FILL_LAYER, siouxCursorOff);
+    return () => {
+      map.off("click", SIOUX_FILL_LAYER, handleSiouxClick);
+      map.off("mouseenter", SIOUX_FILL_LAYER, siouxCursorOn);
+      map.off("mouseleave", SIOUX_FILL_LAYER, siouxCursorOff);
+    };
+  });
+
+  $effect(() => {
+    /** @param {any} event */
+    const onSearch = (event) => {
+      const coords = event?.detail?.coords;
+      if (!Array.isArray(coords)  ||  coords.length != 2) {
+        return;
+      }
+      openSiouxDetails({ lng: coords[0], lat: coords[1] });
+    };
+    window.addEventListener("open-sioux-box", onSearch);
+    return () => window.removeEventListener("open-sioux-box", onSearch);
+  });
+
+  $effect(() => {
+    if (siouxDialogElement === null) {
+      return;
+    }
+    if (siouxDialogOpen) {
+      if (!siouxDialogElement.open) {
+        siouxDialogElement.showModal();
+        requestAnimationFrame(() => {
+          siouxSurfaceElement?.focus();
+        });
+      }
+    }
+    else if (siouxDialogElement.open) {
+      siouxDialogElement.close();
     }
   });
 
@@ -545,6 +701,7 @@
         {popupData}
         pollingPlacesSection={getPollingPlacesSection(popupData)}
         dropboxEntries={getDropboxEntries(popupData)}
+        earlyVotingEntries={getEarlyVotingEntries(popupData)}
         {copied}
         onCopy={handleCopy}
         onBallotpediaLookup={handleBallotpediaLookup}
@@ -571,6 +728,7 @@
         {popupData}
         pollingPlacesSection={getPollingPlacesSection(popupData)}
         dropboxEntries={getDropboxEntries(popupData)}
+        earlyVotingEntries={getEarlyVotingEntries(popupData)}
         {copied}
         onCopy={handleCopy}
         onBallotpediaLookup={handleBallotpediaLookup}
@@ -583,6 +741,27 @@
   {/if}
 </dialog>
 
+<dialog
+  bind:this={siouxDialogElement}
+  class="siouxDialog"
+  oncancel={(event) => { event.preventDefault(); closeSiouxDetails(); }}
+  onclick={(event) => {
+    if (event.target !== siouxDialogElement) {
+      return;
+    }
+    if (Date.now() - siouxOpenedAt < SIOUX_REOPEN_GUARD_MS) {
+      return;
+    }
+    closeSiouxDetails();
+  }}
+>
+  {#if siouxDialogOpen && siouxData !== null}
+    <div class="siouxDialogSurface" bind:this={siouxSurfaceElement} tabindex="-1">
+      <SiouxCountyDetailsContent data={siouxData} onClose={closeSiouxDetails} />
+    </div>
+  {/if}
+</dialog>
+
 {#if popupData !== null}
   <div class="popupMeasurementShell">
     <div class="popupMeasurementContent" bind:this={popupMeasurementElement}>
@@ -590,6 +769,7 @@
         {popupData}
         pollingPlacesSection={getPollingPlacesSection(popupData)}
         dropboxEntries={getDropboxEntries(popupData)}
+        earlyVotingEntries={getEarlyVotingEntries(popupData)}
         {copied}
         onCopy={handleCopy}
         onBallotpediaLookup={handleBallotpediaLookup}
@@ -637,6 +817,29 @@
   }
 
   .addressDialog::backdrop {
+    background: rgba(0, 0, 0, 0.25);
+  }
+
+  .siouxDialog {
+    padding: 0;
+    border: 0;
+    background: transparent;
+    max-width: none;
+    max-height: none;
+  }
+  .siouxDialogSurface {
+    max-width: min(560px, calc(100vw - 24px));
+    /* 100vh is the LARGE viewport on Android Chrome, which hides the bottom of a
+       tall box behind the URL bar. This box is tall by nature. */
+    max-height: min(calc(100vh - 24px), calc(100dvh - 24px));
+    overflow-y: auto;
+    padding: 12px 14px;
+    border: 1px solid #808080;
+    border-radius: 12px;
+    background: white;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.35);
+  }
+  .siouxDialog::backdrop {
     background: rgba(0, 0, 0, 0.25);
   }
 </style>

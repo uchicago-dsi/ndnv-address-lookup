@@ -39,6 +39,27 @@ COLUMN_ENCODING = {
 }
 DICTIONARY_COLUMNS = ["polling_places"]
 
+# The shipped column order, pinned deliberately. src/lib/AddressesLayer.svelte reads
+# the Parquet by an explicit column list and then indexes the result POSITIONALLY
+# (row[0]..row[12]), so a reordered schema risks putting e.g. a district string where
+# a latitude is expected. Appending in a different order is easy to do by accident:
+# it depends on which of these four columns the input already had.
+FINAL_COLUMN_ORDER = [
+    "num",
+    "street",
+    "unit",
+    "muni",
+    "msag",
+    "zip",
+    "src",
+    "lon",
+    "lat",
+    "district",
+    "in_wheretovote",
+    "polling_places",
+    "county_fp",
+]
+
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
@@ -283,15 +304,27 @@ def assign_wheretovote_fields(
 
 
 def build_output_schema(input_schema: pa.Schema) -> pa.Schema:
-    fields = list(input_schema)
-    if "county_fp" not in input_schema.names:
-        fields.append(pa.field("county_fp", pa.uint8()))
-    if "district" not in input_schema.names:
-        fields.append(pa.field("district", pa.string()))
-    if "in_wheretovote" not in input_schema.names:
-        fields.append(pa.field("in_wheretovote", pa.bool_()))
-    if "polling_places" not in input_schema.names:
-        fields.append(pa.field("polling_places", pa.string()))
+    added = {
+        "county_fp": pa.field("county_fp", pa.uint8()),
+        "district": pa.field("district", pa.string()),
+        "in_wheretovote": pa.field("in_wheretovote", pa.bool_()),
+        "polling_places": pa.field("polling_places", pa.string()),
+    }
+    by_name = {field.name: field for field in input_schema}
+    for name, field in added.items():
+        by_name.setdefault(name, field)
+
+    unexpected = set(by_name) - set(FINAL_COLUMN_ORDER)
+    if unexpected:
+        raise RuntimeError(
+            f"unexpected column(s) {sorted(unexpected)}; add them to "
+            f"FINAL_COLUMN_ORDER so the order the app reads stays pinned"
+        )
+    missing = set(FINAL_COLUMN_ORDER) - set(by_name)
+    if missing:
+        raise RuntimeError(f"input is missing column(s) {sorted(missing)}")
+
+    fields = [by_name[name] for name in FINAL_COLUMN_ORDER]
     return pa.schema(fields, metadata=input_schema.metadata)
 
 

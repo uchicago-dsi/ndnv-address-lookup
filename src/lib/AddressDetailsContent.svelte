@@ -5,6 +5,8 @@
   export let pollingPlacesSection = null;
   /** @type {any[]} */
   export let dropboxEntries = [];
+  /** @type {any[]} */
+  export let earlyVotingEntries = [];
   export let copied = false;
   export let onCopy = () => {};
   export let onBallotpediaLookup = () => {};
@@ -34,8 +36,12 @@
       <summary><strong>Source</strong></summary>
       <strong>{popupData?.src_title}</strong><br>
       <strong>Name:</strong> {popupData?.src_name}<br>
-      <strong>Phone:</strong> {popupData?.src_phone}<br>
-      <strong>Email:</strong> <a href="mailto:{popupData?.src_email}">{popupData?.src_email}</a>
+      {#if popupData?.src_phone}
+        <strong>Phone:</strong> {popupData?.src_phone}<br>
+      {/if}
+      {#if popupData?.src_email}
+        <strong>Email:</strong> <a href="mailto:{popupData?.src_email}">{popupData?.src_email}</a>
+      {/if}
     </details>
     <br>
 
@@ -58,7 +64,7 @@
       target="_blank"
       rel="noreferrer"
       onclick={onWhereToVoteLookup}
-    >Copy number and go to WhereToVote</a>
+    >Copy number and go to WhereToVote</a><br>
 
     {#if pollingPlacesSection !== null && pollingPlacesSection.entries.length != 0}
       <br>
@@ -75,6 +81,28 @@
           ({place.polling_hours}, {place.county_auditor_phone})
           <br><br>
         {/each}
+      </details>
+    {/if}
+
+    {#if earlyVotingEntries.length != 0}
+      <details open={expandAllDetails} ontoggle={onDetailsToggle}>
+        <summary><strong>Early Voting</strong></summary>
+        {#each earlyVotingEntries as early, i}
+          {#if i != 0}<br><br>{/if}
+          {early.early_voting_location}<br>
+          {#if early.url !== null}
+            <a href={early.url} target="_blank" rel="noreferrer">{early.addressLine}</a>
+          {:else}
+            {early.addressLine}
+          {/if}
+          {#if early.early_voting_times}
+            <br>{early.early_voting_times}
+          {/if}
+          {#if early.comments}
+            <br>{early.comments}
+          {/if}
+        {/each}
+        <br>
       </details>
     {/if}
 

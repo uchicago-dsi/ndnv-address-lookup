@@ -62,6 +62,12 @@ def parse_args() -> argparse.Namespace:
         help="HTTP User-Agent header",
     )
     parser.add_argument(
+        "--name-column",
+        default="polling_location",
+        help="CSV column holding the location name (early-voting.csv uses "
+             "early_voting_location)",
+    )
+    parser.add_argument(
         "--only",
         default=None,
         help="Only process polling locations containing this substring",
@@ -255,23 +261,28 @@ def resolve_row(
     return coordinate_result, label_result, label_errors
 
 
-def should_process(row: dict[str, str], only: str | None) -> bool:
+def should_process(row: dict[str, str], only: str | None, name_column: str) -> bool:
     if only is None:
         return True
-    return only.lower() in row["polling_location"].lower()
+    return only.lower() in row[name_column].lower()
 
 
 def main() -> int:
     args = parse_args()
     rows = load_rows(args.input)
+    if rows and args.name_column not in rows[0]:
+        raise RuntimeError(
+            f"Input {args.input} has no column {args.name_column!r}; "
+            f"columns are {sorted(rows[0])}"
+        )
     locations = load_existing_locations(args.output)
     geocoder = Geocoder(args.benchmark, args.user_agent)
 
     failures = 0
 
     for row in rows:
-        polling_location = row["polling_location"]
-        if not should_process(row, args.only):
+        polling_location = row[args.name_column]
+        if not should_process(row, args.only, args.name_column):
             continue
         if polling_location in locations:
             print(f"SKIP\t{polling_location}", file=sys.stderr)

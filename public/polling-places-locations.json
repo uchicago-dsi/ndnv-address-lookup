@@ -1,12 +1,4 @@
 {
-  "Twin Buttes Community Center": [-102.25695617765686, 47.514993040575966],
-  "Enchanted Castle": [-102.56295709130461, 46.41885443177998],
-  "Pifer's Auction & Realty Building": [-99.92164761677367, 46.86354522420199],
-  "Edgeley National Guard Armory": [-98.71670012032487, 46.35568054459361],
-  "Ralph Wells Community Center": [-101.84174013780319, 47.669579935846436],
-  "Mountrail County South Complex": [-102.3802828039157, 48.29720687299539],
-  "Pierce Congregational Church": [-103.07514829758594, 46.352400984573464],
-  "Steele County Courthouse": [-97.83825432069641, 47.51453469191752],
   "4H Building": [
     -100.72838107982028,
     46.80572546576273
@@ -179,6 +171,10 @@
     -100.764000220082,
     46.841099775295
   ],
+  "Edgeley National Guard Armory": [
+    -98.71670012032487,
+    46.35568054459361
+  ],
   "El Zagal Shrine": [
     -96.782980230995,
     46.896549583108
@@ -198,6 +194,10 @@
   "Emmons County Courthouse": [
     -100.236332634891,
     46.266663514992
+  ],
+  "Enchanted Castle": [
+    -102.56295709130461,
+    46.41885443177998
   ],
   "Engage Church": [
     -100.930759860728,
@@ -331,6 +331,10 @@
     -97.018605063109,
     46.649340676639
   ],
+  "Lansford Community Center": [
+    -101.376168868746,
+    48.629255964649
+  ],
   "Lansford Mall": [
     -101.37614127431,
     48.629255801848
@@ -362,6 +366,10 @@
   "Mandan Airport": [
     -100.901409162249,
     46.767533292943
+  ],
+  "Mandaree Community Center": [
+    -102.6654757,
+    47.7339156
   ],
   "Mandaree School Cafeteria": [
     -102.67529595097928,
@@ -415,6 +423,18 @@
     -102.326914862494,
     46.375935433025
   ],
+  "Mountrail County South Complex": [
+    -102.3802828039157,
+    48.29720687299539
+  ],
+  "ND State Fair Center": [
+    -101.26172168869962,
+    48.23598335977108
+  ],
+  "National Guard Armory": [
+    -99.548955210019,
+    46.258000011113
+  ],
   "Nedrose All Seasons Arena": [
     -101.263459835298,
     48.231462010529
@@ -463,9 +483,17 @@
     -97.625597355525,
     48.791724542246
   ],
+  "Pierce Congregational Church": [
+    -103.07514829758594,
+    46.352400984573464
+  ],
   "Pierce County Courthouse": [
     -99.993604230616,
     48.368632440117
+  ],
+  "Pifer's Auction & Realty Building": [
+    -99.92164761677367,
+    46.86354522420199
   ],
   "Plaza R&B Complex": [
     -101.95839949904145,
@@ -474,6 +502,10 @@
   "Prairie Hills Mall": [
     -102.789813272331,
     46.901501687275
+  ],
+  "Ralph Wells Community Center": [
+    -101.84174013780319,
+    47.669579935846436
   ],
   "Ramada Inn": [
     -96.832908050996,
@@ -555,6 +587,10 @@
     -101.26172168869962,
     48.23598335977108
   ],
+  "Steele County Courthouse": [
+    -97.83825432069641,
+    47.51453469191752
+  ],
   "Sterling School": [
     -100.293230039002,
     46.812849462072
@@ -591,9 +627,17 @@
     -96.903642160296,
     46.822081870796
   ],
+  "Triumph West Church": [
+    -96.902266,
+    46.8238392
+  ],
   "Turtle Lake City Hall (Vote Center)": [
     -100.89150437018806,
     47.52169181006531
+  ],
+  "Twin Buttes Community Center": [
+    -102.25695617765686,
+    47.514993040575966
   ],
   "United Tribes Technical College-Skills Center": [
     -100.76081232111152,
@@ -610,6 +654,10 @@
   "Walsh County Courthouse": [
     -97.405427003831,
     48.418468366086
+  ],
+  "Ward County Administration Building - 1st Floor Meeting Rooms 105, 106 & 108": [
+    -101.2882570169502,
+    48.23382210137089
   ],
   "Warwick Public School": [
     -98.7111368,
