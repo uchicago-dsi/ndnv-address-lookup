@@ -25,7 +25,7 @@
 
   <div class="siouxBody">
     <p class="siouxLead">
-      Sioux County addresses are missing from North Dakota's 911 address dataset.
+      As of September 2026, Sioux County addresses are not available in North Dakota's 911 address dataset.
     </p>
 
     {#if data?.coordinator !== null && data?.coordinator !== undefined}
