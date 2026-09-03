@@ -33,6 +33,14 @@
   function handleOnLoad(map) {
     theMap = map;
 
+    // Dev-only handle so the map can be driven from the browser console or the
+    // Chrome DevTools MCP when verifying a data refresh (see docs/recheck-runbook.md).
+    // import.meta.env.DEV is statically false in a production build, so this is
+    // dropped entirely by the bundler.
+    if (import.meta.env.DEV) {
+      /** @type {any} */ (window).__map = map;
+    }
+
     if (hashLocation) {
       const [z, y, x] = hashLocation.substring(1).split("/");
       theMap.setZoom(z);
